@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>IntroTaskWebApi.Presentation</name>
+    </assembly>
+    <members>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.GetStudents">
+            <summary>
+            Gets the list of all students
+            </summary>
+            <returns>A list of all students.</returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.GetStudent(System.Int32)">
+            <summary>
+            Gets the student with the provided id
+            </summary>
+            <param name="id"></param>
+            <returns>The student with the provided id from the database.</returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.CreateStudent(Shared.Dtos.StudentCreateDto)">
+            <summary>
+            Creates a new student with the data from the request body
+            </summary>
+            <remarks>
+            Sample request
+            POST api/students
+            {
+                "firstName": "Jane",
+                "lastName": "Doe"
+            }
+            </remarks>
+            <param name="student"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.UpdateStudent(System.Int32,Shared.Dtos.StudentUpdateDto)">
+            <summary>
+            Updates the student with the provided id and data supplied in the request body
+            </summary>
+            <remarks>
+            Sample request
+            PUT api/students
+            {
+                "firstName": "Jane",
+                "lastName": "Doe"
+            }
+            </remarks>
+            <param name="id"></param>
+            <param name="student"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.DeleteStudent(System.Int32)">
+            <summary>
+            Deletes the student with the provided id from the database
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
