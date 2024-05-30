@@ -8,5 +8,6 @@ public interface IStudentService
     StudentResponseDto GetStudentById(int id, bool trackChanges);
     StudentResponseDto CreateStudent(StudentCreateDto studentCreateDto);
     void DeleteStudent(int id, bool trackChanges);
+    void UpdateStudent(int id, StudentUpdateDto studentUpdateDto, bool trackChanges);
 
 }

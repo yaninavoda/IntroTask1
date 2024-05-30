@@ -58,4 +58,13 @@ internal sealed class StudentService : IStudentService
 
         return studentDto;
     }
+
+    public void UpdateStudent(int id, StudentUpdateDto studentUpdateDto, bool trackChanges)
+    {
+        var student = _repository.Student.GetStudentById(id, trackChanges)
+            ?? throw new StudentNotFoundException(id);
+
+        _mapper.Map(studentUpdateDto, student);
+        _repository.Save();
+    }
 }

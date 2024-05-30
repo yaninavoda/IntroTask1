@@ -42,6 +42,18 @@ public class StudentsController : ControllerBase
         createdStudent);
     }
 
+    [HttpPut("{id:int}")]
+    public IActionResult UpdateStudent(int id, [FromBody]StudentUpdateDto student)
+    {
+        if (student is null)
+            return BadRequest("StudentCreatDto object is null");
+
+        _service.StudentService.UpdateStudent(id, student, trackChanges: true);
+
+        var responseDto = _service.StudentService.GetStudentById(id, true);
+        return Ok(responseDto);
+    }
+
     [HttpDelete("{id:int}")]
     public IActionResult DeleteEmployeeForCompany(int id)
     {
