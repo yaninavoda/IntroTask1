@@ -5,6 +5,8 @@ namespace IntroTask.Entities
 {
     public class Course
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is a required field.")]

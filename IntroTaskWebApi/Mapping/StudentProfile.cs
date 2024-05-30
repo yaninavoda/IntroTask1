@@ -8,6 +8,7 @@ public class StudentProfile : Profile
 {
     public StudentProfile()
     {
-        CreateMap<Student, StudentDto>().ReverseMap();
+        CreateMap<Student, StudentResponseDto>();
+        CreateMap<StudentCreateDto, Student>();
     }
 }

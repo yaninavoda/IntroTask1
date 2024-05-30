@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
+using Entities.Exceptions;
+using IntroTask.Entities;
 using Service.Contracts;
 using Shared.Dtos;
 
@@ -18,11 +20,42 @@ internal sealed class StudentService : IStudentService
         _mapper = mapper;
     }
 
-    public IEnumerable<StudentDto> GetAllStudents(bool trackChanges)
+    public StudentResponseDto CreateStudent(StudentCreateDto studentCreateDto)
+    {
+        var student = _mapper.Map<Student>(studentCreateDto);
+
+        _repository.Student.CreateStudent(student);
+        _repository.Save();
+
+        var responseDto = _mapper.Map<StudentResponseDto>(student);
+
+        return responseDto;
+    }
+
+    public void DeleteStudent(int id, bool trackChanges)
+    {
+        var student = _repository.Student.GetStudentById(id, trackChanges)
+            ?? throw new StudentNotFoundException(id);
+
+        _repository.Student.DeleteStudent(student);
+        _repository.Save();
+    }
+
+    public IEnumerable<StudentResponseDto> GetAllStudents(bool trackChanges)
     {
         var students = _repository.Student.GetAllStudents(trackChanges);
-        var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
+        var studentDtos = _mapper.Map<IEnumerable<StudentResponseDto>>(students);
 
         return studentDtos;
+    }
+
+    public StudentResponseDto GetStudentById(int id, bool trackChanges)
+    {
+        var student = _repository.Student.GetStudentById(id, trackChanges)
+            ?? throw new StudentNotFoundException(id);
+
+        var studentDto = _mapper.Map<StudentResponseDto>(student);
+
+        return studentDto;
     }
 }
