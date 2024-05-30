@@ -4,7 +4,7 @@ using Shared.Dtos;
 
 namespace IntroTask.Presentation.Controllers;
 
-[Route("api/students")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 public class StudentsController : ControllerBase
 {
@@ -36,6 +36,9 @@ public class StudentsController : ControllerBase
         if (student is null)
             return BadRequest("StudentCreatDto object is null");
 
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
         var createdStudent = _service.StudentService.CreateStudent(student);
 
         return CreatedAtRoute("StudentById", new { id = createdStudent.Id },
@@ -48,14 +51,16 @@ public class StudentsController : ControllerBase
         if (student is null)
             return BadRequest("StudentCreatDto object is null");
 
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
         _service.StudentService.UpdateStudent(id, student, trackChanges: true);
 
-        var responseDto = _service.StudentService.GetStudentById(id, true);
-        return Ok(responseDto);
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult DeleteEmployeeForCompany(int id)
+    public IActionResult DeleteStudent(int id)
     {
         _service.StudentService.DeleteStudent(id, trackChanges: false);
 

@@ -1,3 +1,3 @@
 ﻿namespace Shared.Dtos;
 
-public record StudentUpdateDto(string FirstName, string LastName);
+public record StudentUpdateDto : StudentManipulationDto;
