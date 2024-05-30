@@ -20,38 +20,38 @@ internal sealed class StudentService : IStudentService
         _mapper = mapper;
     }
 
-    public StudentResponseDto CreateStudent(StudentCreateDto studentCreateDto)
+    public async Task<StudentResponseDto> CreateStudentAsync(StudentCreateDto studentCreateDto)
     {
         var student = _mapper.Map<Student>(studentCreateDto);
 
         _repository.Student.CreateStudent(student);
-        _repository.Save();
+        await _repository.SaveAsync();
 
         var responseDto = _mapper.Map<StudentResponseDto>(student);
 
         return responseDto;
     }
 
-    public void DeleteStudent(int id, bool trackChanges)
+    public async Task DeleteStudentAsync(int id, bool trackChanges)
     {
-        var student = _repository.Student.GetStudentById(id, trackChanges)
+        var student = await _repository.Student.GetStudentByIdAsync(id, trackChanges)
             ?? throw new StudentNotFoundException(id);
 
         _repository.Student.DeleteStudent(student);
-        _repository.Save();
+        await _repository.SaveAsync();
     }
 
-    public IEnumerable<StudentResponseDto> GetAllStudents(bool trackChanges)
+    public async Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync(bool trackChanges)
     {
-        var students = _repository.Student.GetAllStudents(trackChanges);
+        var students = await _repository.Student.GetAllStudentsAsync(trackChanges);
         var studentDtos = _mapper.Map<IEnumerable<StudentResponseDto>>(students);
 
         return studentDtos;
     }
 
-    public StudentResponseDto GetStudentById(int id, bool trackChanges)
+    public async Task<StudentResponseDto> GetStudentByIdAsync(int id, bool trackChanges)
     {
-        var student = _repository.Student.GetStudentById(id, trackChanges)
+        var student = await _repository.Student.GetStudentByIdAsync(id, trackChanges)
             ?? throw new StudentNotFoundException(id);
 
         var studentDto = _mapper.Map<StudentResponseDto>(student);
@@ -59,12 +59,12 @@ internal sealed class StudentService : IStudentService
         return studentDto;
     }
 
-    public void UpdateStudent(int id, StudentUpdateDto studentUpdateDto, bool trackChanges)
+    public async Task UpdateStudentAsync(int id, StudentUpdateDto studentUpdateDto, bool trackChanges)
     {
-        var student = _repository.Student.GetStudentById(id, trackChanges)
+        var student = await _repository.Student.GetStudentByIdAsync(id, trackChanges)
             ?? throw new StudentNotFoundException(id);
 
         _mapper.Map(studentUpdateDto, student);
-        _repository.Save();
+        await _repository.SaveAsync();
     }
 }

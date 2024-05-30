@@ -4,10 +4,10 @@ namespace Service.Contracts;
 
 public interface IStudentService
 {
-    IEnumerable<StudentResponseDto> GetAllStudents(bool trackChanges);
-    StudentResponseDto GetStudentById(int id, bool trackChanges);
-    StudentResponseDto CreateStudent(StudentCreateDto studentCreateDto);
-    void DeleteStudent(int id, bool trackChanges);
-    void UpdateStudent(int id, StudentUpdateDto studentUpdateDto, bool trackChanges);
+    Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync(bool trackChanges);
+    Task<StudentResponseDto> GetStudentByIdAsync(int id, bool trackChanges);
+    Task <StudentResponseDto> CreateStudentAsync(StudentCreateDto studentCreateDto);
+    Task DeleteStudentAsync(int id, bool trackChanges);
+    Task UpdateStudentAsync(int id, StudentUpdateDto studentUpdateDto, bool trackChanges);
 
 }

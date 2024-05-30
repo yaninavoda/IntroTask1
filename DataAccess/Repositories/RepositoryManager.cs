@@ -22,4 +22,6 @@ public sealed class RepositoryManager : IRepositoryManager
     public IStudentRepository Student => _studentRepository.Value;
 
     public void Save() => _context.SaveChanges();
+
+    public async Task SaveAsync() => await _context.SaveChangesAsync();
 }

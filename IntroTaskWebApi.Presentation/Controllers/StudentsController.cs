@@ -16,22 +16,23 @@ public class StudentsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetStudents()
+    public async Task<IActionResult> GetStudents()
     {
-        var companies = _service.StudentService.GetAllStudents(trackChanges: false);
+        var companies = await _service.StudentService.GetAllStudentsAsync(trackChanges: false);
 
         return Ok(companies);
     }
 
     [HttpGet("{id:int}", Name = "StudentById")]
-    public IActionResult GetStudent(int id)
+    public async Task<IActionResult> GetStudent(int id)
     {
-        var student = _service.StudentService.GetStudentById(id, trackChanges: false);
+        var student = await _service.StudentService.GetStudentByIdAsync(id, trackChanges: false);
+
         return Ok(student);
     }
 
     [HttpPost]
-    public IActionResult CreateStudent([FromBody]StudentCreateDto student)
+    public async Task<IActionResult> CreateStudent([FromBody]StudentCreateDto student)
     {
         if (student is null)
             return BadRequest("StudentCreatDto object is null");
@@ -39,14 +40,14 @@ public class StudentsController : ControllerBase
         if (!ModelState.IsValid)
             return UnprocessableEntity(ModelState);
 
-        var createdStudent = _service.StudentService.CreateStudent(student);
+        var createdStudent = await _service.StudentService.CreateStudentAsync(student);
 
         return CreatedAtRoute("StudentById", new { id = createdStudent.Id },
         createdStudent);
     }
 
     [HttpPut("{id:int}")]
-    public IActionResult UpdateStudent(int id, [FromBody]StudentUpdateDto student)
+    public async Task<IActionResult> UpdateStudent(int id, [FromBody]StudentUpdateDto student)
     {
         if (student is null)
             return BadRequest("StudentCreatDto object is null");
@@ -54,15 +55,15 @@ public class StudentsController : ControllerBase
         if (!ModelState.IsValid)
             return UnprocessableEntity(ModelState);
 
-        _service.StudentService.UpdateStudent(id, student, trackChanges: true);
+        await _service.StudentService.UpdateStudentAsync(id, student, trackChanges: true);
 
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult DeleteStudent(int id)
+    public async Task<IActionResult> DeleteStudent(int id)
     {
-        _service.StudentService.DeleteStudent(id, trackChanges: false);
+        await _service.StudentService.DeleteStudentAsync(id, trackChanges: false);
 
         return NoContent();
     }

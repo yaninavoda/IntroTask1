@@ -5,5 +5,5 @@ public interface IRepositoryManager
     ICourseRepository Course { get; }
     ITeacherRepository Teacher { get; }
     IStudentRepository Student { get; }
-    void Save();
+    Task SaveAsync();
 }

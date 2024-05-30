@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories;
 
@@ -19,16 +20,16 @@ internal class StudentRepository : RepositoryBase<Student>, IStudentRepository
         Delete(student);
     }
 
-    public IEnumerable<Student> GetAllStudents(bool trackChanges)
+    public async Task<IEnumerable<Student>> GetAllStudentsAsync(bool trackChanges)
     {
-        return FindAll(trackChanges)
+        return await FindAll(trackChanges)
             .OrderBy(x => x.LastName)
-            .ToList();
+            .ToListAsync();
     }
 
-    public Student? GetStudentById(int id, bool trackChanges)
+    public async Task<Student>? GetStudentByIdAsync(int id, bool trackChanges)
     {
-        return FindByCondition(x => x.Id == id, trackChanges)
-            .SingleOrDefault();
+        return await FindByCondition(x => x.Id == id, trackChanges)
+            .SingleOrDefaultAsync();
     }
 }
