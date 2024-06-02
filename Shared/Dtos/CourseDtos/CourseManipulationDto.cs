@@ -8,6 +8,6 @@ public abstract record CourseManipulationDto
     [MaxLength(60, ErrorMessage = "Maximum length for the {0} is 60 characters.")]
     public string? Title { get; init; }
 
-    [Range(0, int.MaxValue, ErrorMessage = "{0} must be a positive number.")]
+    [Range(1, int.MaxValue, ErrorMessage = "{0} must be a positive number.")]
     public int? TeacherId { get; set; }
 }

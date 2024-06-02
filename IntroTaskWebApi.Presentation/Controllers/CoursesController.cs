@@ -22,6 +22,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// </summary>
         /// <returns>A list of all courses.</returns>
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> GetCourses()
         {
             var courses = await _service.CourseService.GetAllCoursesAsync(trackChanges: false);
@@ -35,6 +36,8 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="id"></param>
         /// <returns>The course with the provided id from the database.</returns>
         [HttpGet("{id:int}", Name = "CourseById")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetCourse(int id)
         {
             var course = await _service.CourseService.GetCourseByIdAsync(id, trackChanges: false);
@@ -87,6 +90,9 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="course"></param>
         /// <returns></returns>
         [HttpPut("{id:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> UpdateCourse(int id, [FromBody] CourseUpdateDto course)
         {
             if (course is null)
@@ -106,6 +112,8 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteCourse(int id)
         {
             await _service.CourseService.DeleteCourseAsync(id, trackChanges: false);
