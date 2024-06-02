@@ -22,5 +22,9 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
                 Title = "History",
                 TeacherId = 2,
             });
+
+        builder.HasOne(x => x.Teacher)
+            .WithMany(x => x.Courses)
+            .HasForeignKey(x => x.TeacherId);
     }
 }

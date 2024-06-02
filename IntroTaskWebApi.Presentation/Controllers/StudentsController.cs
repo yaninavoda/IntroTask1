@@ -18,7 +18,7 @@ public class StudentsController : ControllerBase
     }
 
     /// <summary>
-    /// Gets the list of all students
+    /// Gets the list of all students.
     /// </summary>
     /// <returns>A list of all students.</returns>
     [HttpGet]
@@ -30,7 +30,7 @@ public class StudentsController : ControllerBase
     }
 
     /// <summary>
-    /// Gets the student with the provided id
+    /// Gets the student with the provided id.
     /// </summary>
     /// <param name="id"></param>
     /// <returns>The student with the provided id from the database.</returns>
@@ -43,7 +43,7 @@ public class StudentsController : ControllerBase
     }
 
     /// <summary>
-    /// Creates a new student with the data from the request body
+    /// Creates a new student with the data from the request body.
     /// </summary>
     /// <remarks>
     /// Sample request
@@ -74,7 +74,7 @@ public class StudentsController : ControllerBase
     }
 
     /// <summary>
-    /// Updates the student with the provided id and data supplied in the request body
+    /// Updates the student with the provided id and data supplied in the request body.
     /// </summary>
     /// <remarks>
     /// Sample request
@@ -102,7 +102,7 @@ public class StudentsController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes the student with the provided id from the database
+    /// Deletes the student with the provided id from the database.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>

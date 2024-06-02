@@ -20,5 +20,8 @@ public class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
                     Id = 2,
                     Name = "Anthony Chaffee",
                 });
+
+        builder.HasMany(t => t.Courses)
+            .WithOne(c => c.Teacher);
     }
 }

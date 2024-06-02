@@ -14,7 +14,7 @@ namespace IntroTask.Entities
         public string Title { get; set; } = string.Empty;
 
         [ForeignKey(nameof(Teacher))]
-        public int TeacherId { get; set; }
+        public int? TeacherId { get; set; }
         public Teacher? Teacher { get; set; }
         public ICollection<Student> Students { get; set; } = new List<Student>();
     }

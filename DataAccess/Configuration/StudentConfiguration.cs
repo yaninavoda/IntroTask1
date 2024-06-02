@@ -21,5 +21,8 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
                     FirstName = "Alice",
                     LastName = "Morgan"
                 });
+
+        builder.HasMany(s => s.Courses)
+            .WithMany(c => c.Students);
     }
 }

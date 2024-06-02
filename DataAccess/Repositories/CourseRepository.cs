@@ -23,6 +23,7 @@ internal class CourseRepository : RepositoryBase<Course>, ICourseRepository
     public async Task<IEnumerable<Course>> GetAllCoursesAsync(bool trackChanges)
     {
         return await FindAll(trackChanges)
+            .Include(x => x.Teacher)
             .OrderBy(x => x.Id)
             .ToListAsync();
     }
@@ -30,6 +31,7 @@ internal class CourseRepository : RepositoryBase<Course>, ICourseRepository
     public async Task<Course>? GetCourseByIdAsync(int id, bool trackChanges)
     {
         return await FindByCondition(x => x.Id == id, trackChanges)
+            .Include(x => x.Teacher)
             .SingleOrDefaultAsync();
     }
 }
