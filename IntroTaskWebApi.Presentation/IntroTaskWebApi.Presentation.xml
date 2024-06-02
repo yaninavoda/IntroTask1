@@ -17,7 +17,7 @@
             <param name="id"></param>
             <returns>The student with the provided id from the database.</returns>
         </member>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.CreateStudent(Shared.Dtos.StudentCreateDto)">
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.CreateStudent(Shared.Dtos.StudentDtos.StudentCreateDto)">
             <summary>
             Creates a new student with the data from the request body
             </summary>
@@ -32,7 +32,7 @@
             <param name="student"></param>
             <returns></returns>
         </member>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.UpdateStudent(System.Int32,Shared.Dtos.StudentUpdateDto)">
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.UpdateStudent(System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
             <summary>
             Updates the student with the provided id and data supplied in the request body
             </summary>

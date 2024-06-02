@@ -5,21 +5,23 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntroTaskWebApi", "IntroTaskWebApi\IntroTaskWebApi.csproj", "{25A1D526-701A-425E-ABF5-C09406BE6351}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{2392F161-208E-4332-9117-507C74D2431D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{2392F161-208E-4332-9117-507C74D2431D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerService", "LoggerService\LoggerService.csproj", "{99F55A66-4ED2-49E9-B697-DA38B3557958}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoggerService", "LoggerService\LoggerService.csproj", "{99F55A66-4ED2-49E9-B697-DA38B3557958}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{636ADDF7-9DF6-4120-AD77-A56D1FC4BA97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{636ADDF7-9DF6-4120-AD77-A56D1FC4BA97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{FAACBECB-4AFB-4442-B198-81250AC4D72A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{FAACBECB-4AFB-4442-B198-81250AC4D72A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Contracts", "Service.Contracts\Service.Contracts.csproj", "{D7F235B9-C086-493A-AD9D-38411487B2FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.Contracts", "Service.Contracts\Service.Contracts.csproj", "{D7F235B9-C086-493A-AD9D-38411487B2FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{1ACD283D-10CD-450B-8611-140362D9394E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{1ACD283D-10CD-450B-8611-140362D9394E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{A24D3076-64AC-43A4-BAB0-77DECF9EBE15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{A24D3076-64AC-43A4-BAB0-77DECF9EBE15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntroTaskWebApi.Presentation", "IntroTaskWebApi.Presentation\IntroTaskWebApi.Presentation.csproj", "{E5DA54EA-F919-488F-BFA0-CB0CAA5889E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntroTaskWebApi.Presentation", "IntroTaskWebApi.Presentation\IntroTaskWebApi.Presentation.csproj", "{E5DA54EA-F919-488F-BFA0-CB0CAA5889E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntroTask.Tests", "IntroTask.Tests\IntroTask.Tests.csproj", "{9F961FEA-D7BE-4BCE-822F-07BF7F7D34D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{E5DA54EA-F919-488F-BFA0-CB0CAA5889E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5DA54EA-F919-488F-BFA0-CB0CAA5889E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5DA54EA-F919-488F-BFA0-CB0CAA5889E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F961FEA-D7BE-4BCE-822F-07BF7F7D34D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F961FEA-D7BE-4BCE-822F-07BF7F7D34D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F961FEA-D7BE-4BCE-822F-07BF7F7D34D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F961FEA-D7BE-4BCE-822F-07BF7F7D34D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

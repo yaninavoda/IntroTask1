@@ -5,6 +5,7 @@ using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 using Service;
+using Microsoft.OpenApi.Models;
 
 namespace IntroTask.Extensions
 {
@@ -26,6 +27,30 @@ namespace IntroTask.Extensions
 
         public static void ConfigureServiceManager(this IServiceCollection services) =>
             services.AddScoped<IServiceManager, ServiceManager>();
+
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Course API",
+                    Version = "v1",
+                    Description = "Course - teacher - student API",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Ianina Voda",
+                        Email = "myemail@gmail.com",
+                        Url = new Uri("https://twitter.com/myfacebook"),
+                    }
+                });
+                var xmlFile = $"{typeof(IntroTask.Presentation.AssemblyReference).Assembly.GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+                c.IncludeXmlComments(xmlPath);
+            });
+        }
     }
 }
 

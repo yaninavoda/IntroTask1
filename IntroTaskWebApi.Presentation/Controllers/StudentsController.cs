@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
-using Shared.Dtos;
+using Shared.Dtos.StudentDtos;
 
 namespace IntroTask.Presentation.Controllers;
 

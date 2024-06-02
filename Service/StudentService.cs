@@ -3,7 +3,7 @@ using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
 using Service.Contracts;
-using Shared.Dtos;
+using Shared.Dtos.StudentDtos;
 
 namespace Service;
 

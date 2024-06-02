@@ -20,36 +20,13 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.Services.ConfigureSwagger();
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(IntroTask.Presentation.AssemblyReference).Assembly);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Course API",
-        Version = "v1",
-        Description = "Course - teacher - student API",
-        TermsOfService = new Uri("https://example.com/terms"),
-        Contact = new OpenApiContact
-        {
-            Name = "Ianina Voda",
-            Email = "myemail@gmail.com",
-            Url = new Uri("https://twitter.com/myfacebook"),
-        }
-    });
-    var xmlFile = $"{typeof(IntroTask.Presentation.AssemblyReference).Assembly.GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-    c.IncludeXmlComments(xmlPath);
-});
-    
-
-    
-    
-    
+      
 var app = builder.Build();
 
 app.UseExceptionHandler(opt => { });

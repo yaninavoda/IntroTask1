@@ -23,7 +23,7 @@ internal class StudentRepository : RepositoryBase<Student>, IStudentRepository
     public async Task<IEnumerable<Student>> GetAllStudentsAsync(bool trackChanges)
     {
         return await FindAll(trackChanges)
-            .OrderBy(x => x.LastName)
+            .OrderBy(x => x.Id)
             .ToListAsync();
     }
 

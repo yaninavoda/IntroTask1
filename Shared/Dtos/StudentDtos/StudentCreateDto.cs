@@ -1,3 +1,3 @@
-﻿namespace Shared.Dtos;
+﻿namespace Shared.Dtos.StudentDtos;
 
 public record StudentCreateDto : StudentManipulationDto;

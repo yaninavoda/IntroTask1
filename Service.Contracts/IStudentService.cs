@@ -1,4 +1,4 @@
-﻿using Shared.Dtos;
+﻿using Shared.Dtos.StudentDtos;
 
 namespace Service.Contracts;
 
@@ -9,5 +9,4 @@ public interface IStudentService
     Task <StudentResponseDto> CreateStudentAsync(StudentCreateDto studentCreateDto);
     Task DeleteStudentAsync(int id, bool trackChanges);
     Task UpdateStudentAsync(int id, StudentUpdateDto studentUpdateDto, bool trackChanges);
-
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Dtos;
+namespace Shared.Dtos.StudentDtos;
 
 public abstract record StudentManipulationDto
 {

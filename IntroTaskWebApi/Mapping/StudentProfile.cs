@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using IntroTask.Entities;
-using Shared.Dtos;
+using Shared.Dtos.StudentDtos;
 
 namespace IntroTask.Mapping;
 
