@@ -34,4 +34,10 @@ internal class CourseRepository : RepositoryBase<Course>, ICourseRepository
             .Include(x => x.Teacher)
             .SingleOrDefaultAsync();
     }
+
+    public async Task<IEnumerable<Course>>? GetCoursesByTeacherIdAsync(int teacherId, bool trackChanges)
+    {
+        return await FindByCondition(x => x.TeacherId == teacherId, trackChanges)
+            .ToListAsync();
+    }
 }

@@ -105,5 +105,18 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.GetTeachers">
+            <summary>
+            Gets the list of all teachers.
+            </summary>
+            <returns>A list of all teachers.</returns>
+        </member>
+        <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.GetTeacher(System.Int32)">
+            <summary>
+            Gets the teacher with the provided id.
+            </summary>
+            <param name="id"></param>
+            <returns>The teacher with the provided id from the database.</returns>
+        </member>
     </members>
 </doc>

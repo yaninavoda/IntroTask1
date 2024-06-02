@@ -3,6 +3,7 @@ using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
 using Service.Contracts;
+using Shared.Dtos.CourseDtos;
 using Shared.Dtos.TeacherDtos;
 
 namespace Service;
@@ -56,7 +57,11 @@ internal sealed class TeacherService : ITeacherService
         var teacher = await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
             ?? throw new TeacherNotFoundException(id);
 
-        var responseDto = _mapper.Map<TeacherResponseDto>(teacher);
+        var courses = await _repository.Course.GetCoursesByTeacherIdAsync(id, trackChanges);
+
+        var dtos = _mapper.Map<List<CourseShortResponseDto>>(courses);
+        var responseDto = new TeacherResponseDto(id, teacher.Name, dtos);
+                          //_mapper.Map<TeacherResponseDto>(teacher);
 
         return responseDto;
     }
