@@ -43,25 +43,25 @@ internal sealed class TeacherService : ITeacherService
         await _repository.SaveAsync();
     }
 
-    public async Task<IEnumerable<TeacherResponseDto>> GetAllTeachersAsync(bool trackChanges)
+    public async Task<IEnumerable<TeacherShortResponseDto>> GetAllTeachersAsync(bool trackChanges)
     {
         var teachers = await _repository.Teacher.GetAllTeachersAsync(trackChanges);
 
-        var responseDtos = _mapper.Map<IEnumerable<TeacherResponseDto>>(teachers);
+        var responseDtos = _mapper.Map<List<TeacherShortResponseDto>>(teachers);
 
         return responseDtos;
     }
 
-    public async Task<TeacherResponseDto> GetTeacherByIdAsync(int id, bool trackChanges)
+    public async Task<TeacherShortResponseDto> GetTeacherByIdAsync(int id, bool trackChanges)
     {
         var teacher = await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
             ?? throw new TeacherNotFoundException(id);
 
         var courses = await _repository.Course.GetCoursesByTeacherIdAsync(id, trackChanges);
 
-        var dtos = _mapper.Map<List<CourseShortResponseDto>>(courses);
-        var responseDto = new TeacherResponseDto(id, teacher.Name, dtos);
-                          //_mapper.Map<TeacherResponseDto>(teacher);
+        var courseDtos = _mapper.Map<List<CourseShortResponseDto>>(courses);
+
+        var responseDto = new TeacherShortResponseDto(id, teacher.Name, courseDtos);
 
         return responseDto;
     }

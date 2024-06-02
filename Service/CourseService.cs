@@ -24,9 +24,9 @@ internal sealed class CourseService : ICourseService
 
     public async Task<CourseResponseDto> CreateCourseAsync(CourseCreateDto courseCreateDto)
     {
-        var teacherId = courseCreateDto.TeacherId.Value;
-        var teacher = await _repository.Teacher.GetTeacherByIdAsync(teacherId, trackChanges: true)
-            ?? throw new TeacherNotFoundException(teacherId);
+        //var teacherId = courseCreateDto.TeacherId.Value;
+        //var teacher = await _repository.Teacher.GetTeacherByIdAsync(teacherId, trackChanges: true)
+        //    ?? throw new TeacherNotFoundException(teacherId);
 
         var course = _mapper.Map<Course>(courseCreateDto);
 
@@ -34,8 +34,8 @@ internal sealed class CourseService : ICourseService
 
         await _repository.SaveAsync();
 
-        var responseDto = new CourseResponseDto(course.Id, course.Title, _mapper.Map<TeacherResponseDto>(teacher));
-        
+        //var responseDto = new CourseResponseDto(course.Id, course.Title, _mapper.Map<TeacherResponseDto>(teacher));
+        var responseDto = _mapper.Map<CourseResponseDto>(course);
         return responseDto;
     }
 
@@ -72,9 +72,9 @@ internal sealed class CourseService : ICourseService
         var course = await _repository.Course.GetCourseByIdAsync(id, trackChanges)
             ?? throw new CourseNotFoundException(id);
 
-        var teacherId = courseUpdateDto.TeacherId.Value;
-        var teacher = await _repository.Teacher.GetTeacherByIdAsync(teacherId, trackChanges: true)
-            ?? throw new TeacherNotFoundException(teacherId);
+        //var teacherId = courseUpdateDto.TeacherId.Value;
+        //var teacher = await _repository.Teacher.GetTeacherByIdAsync(teacherId, trackChanges: true)
+        //    ?? throw new TeacherNotFoundException(teacherId);
 
         _mapper.Map(courseUpdateDto, course);
 

@@ -9,6 +9,7 @@ public class TeacherProfile : Profile
     public TeacherProfile()
     {
         CreateMap<Teacher, TeacherResponseDto>();
+        CreateMap<Teacher, TeacherShortResponseDto>();
         CreateMap<TeacherCreateDto, Teacher>();
         CreateMap<TeacherUpdateDto, Teacher>();
     }

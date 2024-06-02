@@ -12,12 +12,12 @@ internal class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
 
     public void CreateTeacher(Teacher teacher)
     {
-        throw new NotImplementedException();
+        Create(teacher);
     }
 
     public void DeleteTeacher(Teacher teacher)
     {
-        throw new NotImplementedException();
+        Delete(teacher);
     }
 
     public async Task<IEnumerable<Teacher>> GetAllTeachersAsync(bool trackChanges)
