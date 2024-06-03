@@ -2,4 +2,4 @@
 
 namespace Shared.Dtos.CourseDtos;
 
-public record CourseResponseDto(int Id, string Title, TeacherResponseDto? Teacher);
+public record CourseResponseDto(int Id, string Title, TeacherShortResponseDto? Teacher);

@@ -49,10 +49,10 @@ internal sealed class CourseService : ICourseService
         await _repository.SaveAsync();
     }
 
-    public async Task<IEnumerable<CourseResponseDto>> GetAllCoursesAsync(bool trackChanges)
+    public async Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync(bool trackChanges)
     {
         var courses = await _repository.Course.GetAllCoursesAsync(trackChanges);
-        var responseDtos = _mapper.Map<IEnumerable<CourseResponseDto>>(courses);
+        var responseDtos = _mapper.Map<IEnumerable<CourseShortResponseDto>>(courses);
 
         return responseDtos;
     }
