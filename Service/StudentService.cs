@@ -7,7 +7,7 @@ using Shared.Dtos.StudentDtos;
 
 namespace Service;
 
-internal sealed class StudentService : IStudentService
+internal sealed class StudentService : IStudentService, ICourseStudentService
 {
     private readonly IRepositoryManager _repository;
     private readonly ILoggerManager _logger;
@@ -39,6 +39,11 @@ internal sealed class StudentService : IStudentService
 
         _repository.Student.DeleteStudent(student);
         await _repository.SaveAsync();
+    }
+
+    public Task EnrollStudentInCourseAsync(int studentId, int courseId, bool trackChanges)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync(bool trackChanges)

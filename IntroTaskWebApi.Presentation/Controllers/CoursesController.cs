@@ -105,17 +105,23 @@ namespace IntroTaskWebApi.Presentation.Controllers
 
             return NoContent();
         }
-
-        [HttpPut("AppointTeacherForCourse")]
-        public async Task<IActionResult> AppointTeacherForCourse(int id, [FromBody] CourseAppointTeacherDto course)
+        /// <summary>
+        /// Appoints the teacher to the course.
+        /// </summary>
+        /// <param name="id">This course's id</param>
+        /// <param name="teacherId">The id of the teacher to be appointed for this course</param>
+        /// <param name="course"></param>
+        /// <returns></returns>
+        [HttpPut("{id:int}/teachers/{teacherId:int}")]
+        public async Task<IActionResult> AppointTeacherForCourse(int id, int teacherId, [FromBody] CourseUpdateDto course)
         {
             if (course is null)
-                return BadRequest($"{nameof(CourseAppointTeacherDto)} object is null");
+                return BadRequest($"{nameof(CourseUpdateDto)} object is null");
 
             if (!ModelState.IsValid)
                 return UnprocessableEntity(ModelState);
 
-            await _service.CourseService.AppointTeacherForCourse(id, course, trackChanges: true);
+            await _service.CourseService.AppointTeacherForCourse(id, teacherId, course, trackChanges: true);
 
             return NoContent();
         }

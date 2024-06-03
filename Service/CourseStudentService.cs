@@ -34,18 +34,22 @@ public class CourseStudentService : ICourseStudentService
 
         var isAlreadyEnrolled = student.Courses.Any(c => c.Id == courseId);
 
-        if (! isAlreadyEnrolled)
+        if (!isAlreadyEnrolled)
         {
-            student.Courses.Add(course);
+            // _repository.
         }
+            //if (! isAlreadyEnrolled)
+            //{
+            //    student.Courses.Add(course);
+            //}
 
-        var doesCourseHaveStudent = course.Students.Any(s => s.Id == studentId);
+            //var doesCourseHaveStudent = course.Students.Any(s => s.Id == studentId);
 
-        if (! doesCourseHaveStudent)
-        {
-            course.Students.Add(student);
-        }
+            //if (! doesCourseHaveStudent)
+            //{
+            //    course.Students.Add(student);
+            //}
 
-        await _repository.SaveAsync();
+            await _repository.SaveAsync();
     }
 }

@@ -79,10 +79,11 @@ internal sealed class CourseService : ICourseService
 
     public async Task AppointTeacherForCourse(
         int id,
-        CourseAppointTeacherDto courseDto,
+        int teacherId,
+        CourseUpdateDto courseDto,
         bool trackChanges)
     {
-        var teacherId = courseDto.TeacherId;
+        //var teacherId = courseDto.TeacherId;
 
         var teacher = await _repository.Teacher.GetTeacherByIdAsync(
             teacherId,

@@ -12,6 +12,5 @@ public class CourseProfile : Profile
         CreateMap<Course, CourseShortResponseDto>();
         CreateMap<CourseCreateDto, Course>();
         CreateMap<CourseUpdateDto, Course>();
-        CreateMap<CourseAppointTeacherDto, Course>();
     }
 }

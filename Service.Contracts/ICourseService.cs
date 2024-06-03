@@ -14,6 +14,7 @@ public interface ICourseService
         bool trackChanges);
     Task AppointTeacherForCourse(
         int id,
-        CourseAppointTeacherDto courseDto,
+        int teacherId,
+        CourseUpdateDto courseDto,
         bool trackChanges);
 }
