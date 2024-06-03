@@ -51,12 +51,12 @@ internal sealed class TeacherService : ITeacherService
         return responseDtos;
     }
 
-    public async Task<TeacherShortResponseDto> GetTeacherByIdAsync(int id, bool trackChanges)
+    public async Task<TeacherResponseDto> GetTeacherByIdAsync(int id, bool trackChanges)
     {
         var teacher = await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
             ?? throw new TeacherNotFoundException(id);
 
-        var responseDto = _mapper.Map<TeacherShortResponseDto>(teacher);
+        var responseDto = _mapper.Map<TeacherResponseDto>(teacher);
 
         return responseDto;
     }

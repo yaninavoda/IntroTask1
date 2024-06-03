@@ -30,6 +30,7 @@ internal class TeacherRepository : RepositoryBase<Teacher>, ITeacherRepository
     public async Task<Teacher>? GetTeacherByIdAsync(int id, bool trackChanges)
     {
         return await FindByCondition(x => x.Id == id, trackChanges)
+            .Include(t => t.Courses)
             .SingleOrDefaultAsync();
     }
 }
