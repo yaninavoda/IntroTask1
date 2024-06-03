@@ -80,4 +80,26 @@ internal sealed class CourseService : ICourseService
 
         await _repository.SaveAsync();
     }
+
+    public async Task AppointTeacherForCourse(
+        int id,
+        CourseAppointTeacherDto courseDto,
+        bool trackChanges)
+    {
+        var teacherId = courseDto.TeacherId;
+
+        var teacher = await _repository.Teacher.GetTeacherByIdAsync(
+            teacherId,
+            trackChanges)
+        ?? throw new TeacherNotFoundException(teacherId);
+
+        var course = await _repository.Course.GetCourseByIdAsync(
+            id,
+            trackChanges)
+        ?? throw new CourseNotFoundException(id);
+
+        _mapper.Map(courseDto, course);
+
+        await _repository.SaveAsync();
+    }
 }

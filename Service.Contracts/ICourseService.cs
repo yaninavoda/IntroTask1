@@ -8,5 +8,12 @@ public interface ICourseService
     Task<CourseResponseDto> GetCourseByIdAsync(int id, bool trackChanges);
     Task<CourseResponseDto> CreateCourseAsync(CourseCreateDto courseCreateDto);
     Task DeleteCourseAsync(int id, bool trackChanges);
-    Task UpdateCourseAsync(int id, CourseUpdateDto courseUpdateDto, bool trackChanges);
+    Task UpdateCourseAsync(
+        int id,
+        CourseUpdateDto courseUpdateDto,
+        bool trackChanges);
+    Task AppointTeacherForCourse(
+        int id,
+        CourseAppointTeacherDto courseDto,
+        bool trackChanges);
 }

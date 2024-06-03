@@ -106,6 +106,20 @@ namespace IntroTaskWebApi.Presentation.Controllers
             return NoContent();
         }
 
+        [HttpPut("AppointTeacherForCourse")]
+        public async Task<IActionResult> AppointTeacherForCourse(int id, [FromBody] CourseAppointTeacherDto course)
+        {
+            if (course is null)
+                return BadRequest($"{nameof(CourseAppointTeacherDto)} object is null");
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
+            await _service.CourseService.AppointTeacherForCourse(id, course, trackChanges: true);
+
+            return NoContent();
+        }
+
         /// <summary>
         /// Deletes the course with the provided id from the database.
         /// </summary>
