@@ -7,7 +7,7 @@ using Shared.Dtos.TeacherDtos;
 
 namespace Service;
 
-internal sealed class TeacherService : ITeacherService
+public sealed class TeacherService : ITeacherService
 {
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
@@ -44,7 +44,8 @@ internal sealed class TeacherService : ITeacherService
     {
         var teachers = await _repository.Teacher.GetAllTeachersAsync(trackChanges);
 
-        var responseDtos = _mapper.Map<List<TeacherShortResponseDto>>(teachers);
+        var responseDtos = _mapper.Map<List<TeacherShortResponseDto>>(teachers)
+            ?? [];
 
         return responseDtos;
     }

@@ -1,6 +1,5 @@
 using Contracts;
 using LoggerService;
-using Moq;
 
 namespace IntroTask.Tests.LoggerTests
 {

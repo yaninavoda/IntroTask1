@@ -14,7 +14,7 @@
             <summary>
             Gets the student with the provided id.
             </summary>
-            <param name="id"></param>
+            <param name="id">the student's to retrieve id</param>
             <returns>The student with the provided id from the database.</returns>
         </member>
         <member name="M:IntroTask.Presentation.Controllers.StudentsController.CreateStudent(Shared.Dtos.StudentDtos.StudentCreateDto)">
@@ -29,7 +29,7 @@
                 "lastName": "Doe"
             }
             </remarks>
-            <param name="student"></param>
+            <param name="student">StudentCreateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTask.Presentation.Controllers.StudentsController.UpdateStudent(System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
@@ -44,8 +44,8 @@
                 "lastName": "Doe"
             }
             </remarks>
-            <param name="id"></param>
-            <param name="student"></param>
+            <param name="id">the student's to update id</param>
+            <param name="student">StudentUpdateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTask.Presentation.Controllers.StudentsController.EnrollStudentInCourse(System.Int32,System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
@@ -61,7 +61,7 @@
             <summary>
             Deletes the student with the provided id from the database.
             </summary>
-            <param name="id"></param>
+            <param name="id">the student's to delete id</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.GetCourses">
@@ -74,7 +74,7 @@
             <summary>
             Gets the course with the provided id.
             </summary>
-            <param name="id"></param>
+            <param name="id">The course's to retrieve id</param>
             <returns>The course with the provided id from the database.</returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.CreateCourse(Shared.Dtos.CourseDtos.CourseCreateDto)">
@@ -88,7 +88,7 @@
                 "title": "Literature"
             }
             </remarks>
-            <param name="course"></param>
+            <param name="course">CourseCreateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.UpdateCourse(System.Int32,Shared.Dtos.CourseDtos.CourseUpdateDto)">
@@ -102,17 +102,17 @@
                 "title": "Literature"
             }
             </remarks>
-            <param name="id"></param>
-            <param name="course"></param>
+            <param name="id">The course's to update id</param>
+            <param name="course">CourseUpdateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.AppointTeacherForCourse(System.Int32,System.Int32,Shared.Dtos.CourseDtos.CourseUpdateDto)">
             <summary>
             Appoints the teacher to the course.
             </summary>
-            <param name="id">This course's id</param>
+            <param name="id">The course's id</param>
             <param name="teacherId">The id of the teacher to be appointed for this course</param>
-            <param name="course"></param>
+            <param name="course">CourseUpdateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.ExcludeStudentFromCourse(System.Int32,System.Int32,Shared.Dtos.CourseDtos.CourseUpdateDto)">
@@ -121,7 +121,7 @@
             </summary>
             <param name="id">The id of the course</param>
             <param name="studentId">The id of the student to be excluded</param>
-            <param name="course">course dto</param>
+            <param name="course">CourseUpdateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.DeleteCourse(System.Int32)">
@@ -129,7 +129,7 @@
             Deletes the course with the provided id from the database.
             </summary>
             <param name="id"></param>
-            <returns></returns>
+            <returns>The course's to delete id</returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.GetTeachers">
             <summary>
@@ -141,7 +141,7 @@
             <summary>
             Gets the teacher with the provided id.
             </summary>
-            <param name="id"></param>
+            <param name="id">The teacher's to retrieve id</param>
             <returns>The teacher with the provided id from the database.</returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.CreateTeacher(Shared.Dtos.TeacherDtos.TeacherCreateDto)">
@@ -152,11 +152,10 @@
             Sample request
             POST api/courses
             {
-                "name": "John Smith",
-                "courseId": 2
+                "name": "John Smith"
             }
             </remarks>
-            <param name="teacher"></param>
+            <param name="teacher">TeacherCreateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.UpdateTeacher(System.Int32,Shared.Dtos.TeacherDtos.TeacherUpdateDto)">
@@ -170,24 +169,24 @@
                 "name": "John Smith"
             }
             </remarks>
-            <param name="id"></param>
-            <param name="teacher"></param>
+            <param name="id">The teacher's to update id</param>
+            <param name="teacher">TeacherUpdateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.ResignTeacherFromCourse(System.Int32,System.Int32,Shared.Dtos.TeacherDtos.TeacherUpdateDto)">
             <summary>
-            REsigns the teacher from the course.
+            Resigns the teacher from the course.
             </summary>
-            <param name="id">The teacher's id</param>
-            <param name="courseId">The id of the course to resign the techer from</param>
-            <param name="teacher">teacher dto</param>
+            <param name="id">The teacher's to resign id</param>
+            <param name="courseId">The id of the course to resign the teacher from</param>
+            <param name="teacher">TeacherUpdateDto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.DeleteTeacher(System.Int32)">
             <summary>
             Deletes the teacher with the provided id from the database.
             </summary>
-            <param name="id"></param>
+            <param name="id">The teacher's to delete id</param>
             <returns></returns>
         </member>
     </members>
