@@ -4,6 +4,7 @@ using Entities.Exceptions;
 using IntroTask.Entities;
 using Service.Contracts;
 using Shared.Dtos.CourseDtos;
+using Shared.Dtos.StudentDtos;
 
 namespace Service;
 
@@ -93,5 +94,26 @@ internal sealed class CourseService : ICourseService
         course.Teacher = teacher;
 
         await _repository.SaveAsync();
+    }
+
+    public async Task ExcludeStudentFromCourse(int id, int studentId, CourseUpdateDto courseDto, bool trackChanges)
+    {
+        var student = await _repository.Student.GetStudentByIdAsync(studentId, trackChanges)
+            ?? throw new StudentNotFoundException(studentId);
+
+        var course = await _repository.Course.GetCourseByIdAsync(id, trackChanges)
+            ?? throw new CourseNotFoundException(id);
+
+        var isEnrolled = student.Courses.Any(c => c.Students.Any(s => s.Id == studentId));
+
+        if (isEnrolled)
+        {
+            student.Courses.Remove(course);
+            course.Students.Remove(student);
+
+            _mapper.Map(courseDto, course);
+
+            await _repository.SaveAsync();
+        }
     }
 }

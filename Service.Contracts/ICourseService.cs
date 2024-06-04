@@ -17,4 +17,10 @@ public interface ICourseService
         int teacherId,
         CourseUpdateDto courseDto,
         bool trackChanges);
+
+    Task ExcludeStudentFromCourse(
+        int id,
+        int studentId,
+        CourseUpdateDto courseDto,
+        bool trackChanges);
 }

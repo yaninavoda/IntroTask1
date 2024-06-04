@@ -115,6 +115,15 @@
             <param name="course"></param>
             <returns></returns>
         </member>
+        <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.ExcludeStudentFromCourse(System.Int32,System.Int32,Shared.Dtos.CourseDtos.CourseUpdateDto)">
+            <summary>
+            Excludes the student from the course.
+            </summary>
+            <param name="id">The id of the course</param>
+            <param name="studentId">The id of the student to be excluded</param>
+            <param name="course">course dto</param>
+            <returns></returns>
+        </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.DeleteCourse(System.Int32)">
             <summary>
             Deletes the course with the provided id from the database.

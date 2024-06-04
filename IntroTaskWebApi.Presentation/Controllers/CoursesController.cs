@@ -126,6 +126,27 @@ namespace IntroTaskWebApi.Presentation.Controllers
         }
 
         /// <summary>
+        /// Excludes the student from the course.
+        /// </summary>
+        /// <param name="id">The id of the course</param>
+        /// <param name="studentId">The id of the student to be excluded</param>
+        /// <param name="course">course dto</param>
+        /// <returns></returns>
+        [HttpPut("{id:int}/Students/{studentId:int}")]
+        public async Task<IActionResult> ExcludeStudentFromCourse(int id, int studentId, [FromBody] CourseUpdateDto course)
+        {
+            if (course is null)
+                return BadRequest($"{nameof(CourseUpdateDto)} object is null");
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
+            await _service.CourseService.ExcludeStudentFromCourse(id, studentId, course, trackChanges: true);
+
+            return NoContent();
+        }
+
+        /// <summary>
         /// Deletes the course with the provided id from the database.
         /// </summary>
         /// <param name="id"></param>
