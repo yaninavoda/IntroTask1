@@ -7,27 +7,25 @@ using Shared.Dtos.StudentDtos;
 
 namespace Service;
 
-internal sealed class StudentService : IStudentService, ICourseStudentService
+internal sealed class StudentService : IStudentService
 {
     private readonly IRepositoryManager _repository;
-    private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
 
-    public StudentService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public StudentService(IRepositoryManager repository, IMapper mapper)
     {
         _repository = repository;
-        _logger = logger;
         _mapper = mapper;
     }
 
-    public async Task<StudentResponseDto> CreateStudentAsync(StudentCreateDto studentCreateDto)
+    public async Task<StudentShortResponseDto> CreateStudentAsync(StudentCreateDto studentCreateDto)
     {
         var student = _mapper.Map<Student>(studentCreateDto);
 
         _repository.Student.CreateStudent(student);
         await _repository.SaveAsync();
 
-        var responseDto = _mapper.Map<StudentResponseDto>(student);
+        var responseDto = _mapper.Map<StudentShortResponseDto>(student);
 
         return responseDto;
     }
@@ -41,15 +39,31 @@ internal sealed class StudentService : IStudentService, ICourseStudentService
         await _repository.SaveAsync();
     }
 
-    public Task EnrollStudentInCourseAsync(int studentId, int courseId, bool trackChanges)
+    public async Task EnrollStudentInCourseAsync(int studentId, int courseId, StudentUpdateDto studentUpdateDto, bool trackChanges)
     {
-        throw new NotImplementedException();
+        var student = await _repository.Student.GetStudentByIdAsync(studentId, trackChanges)
+            ?? throw new StudentNotFoundException(studentId);
+
+        var course = await _repository.Course.GetCourseByIdAsync(courseId, trackChanges)
+            ?? throw new CourseNotFoundException(courseId);
+
+        var isAlreadyEnrolled = student.Courses.Any(c => c.Students.Any(s => s.Id == studentId));
+
+        if (! isAlreadyEnrolled)
+        {
+            student.Courses.Add(course);
+            course.Students.Add(student);
+        
+            _mapper.Map(studentUpdateDto, student);
+
+            await _repository.SaveAsync();
+        }
     }
 
-    public async Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync(bool trackChanges)
+    public async Task<IEnumerable<StudentShortResponseDto>> GetAllStudentsAsync(bool trackChanges)
     {
         var students = await _repository.Student.GetAllStudentsAsync(trackChanges);
-        var studentDtos = _mapper.Map<IEnumerable<StudentResponseDto>>(students);
+        var studentDtos = _mapper.Map<IEnumerable<StudentShortResponseDto>>(students);
 
         return studentDtos;
     }

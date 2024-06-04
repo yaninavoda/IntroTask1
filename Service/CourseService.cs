@@ -4,38 +4,31 @@ using Entities.Exceptions;
 using IntroTask.Entities;
 using Service.Contracts;
 using Shared.Dtos.CourseDtos;
-using Shared.Dtos.TeacherDtos;
 
 namespace Service;
 
 internal sealed class CourseService : ICourseService
 {
     private readonly IRepositoryManager _repository;
-    private readonly ILoggerManager _logger;
     private readonly IMapper _mapper;
 
 
-    public CourseService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+    public CourseService(IRepositoryManager repository, IMapper mapper)
     {
         _repository = repository;
-        _logger = logger;
         _mapper = mapper;
     }
 
     public async Task<CourseResponseDto> CreateCourseAsync(CourseCreateDto courseCreateDto)
     {
-        //var teacherId = courseCreateDto.TeacherId.Value;
-        //var teacher = await _repository.Teacher.GetTeacherByIdAsync(teacherId, trackChanges: true)
-        //    ?? throw new TeacherNotFoundException(teacherId);
-
         var course = _mapper.Map<Course>(courseCreateDto);
 
         _repository.Course.CreateCourse(course);
 
         await _repository.SaveAsync();
 
-        //var responseDto = new CourseResponseDto(course.Id, course.Title, _mapper.Map<TeacherResponseDto>(teacher));
         var responseDto = _mapper.Map<CourseResponseDto>(course);
+
         return responseDto;
     }
 
@@ -83,8 +76,6 @@ internal sealed class CourseService : ICourseService
         CourseUpdateDto courseDto,
         bool trackChanges)
     {
-        //var teacherId = courseDto.TeacherId;
-
         var teacher = await _repository.Teacher.GetTeacherByIdAsync(
             teacherId,
             trackChanges)
@@ -95,7 +86,11 @@ internal sealed class CourseService : ICourseService
             trackChanges)
         ?? throw new CourseNotFoundException(id);
 
+        teacher.Courses!.Add(course);
+
         _mapper.Map(courseDto, course);
+        course.TeacherId = teacherId;
+        course.Teacher = teacher;
 
         await _repository.SaveAsync();
     }

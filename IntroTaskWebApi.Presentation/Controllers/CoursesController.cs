@@ -52,8 +52,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// Sample request
         /// POST api/courses
         /// {
-        ///     "title": "Literature",
-        ///     "teacherId": 2
+        ///     "title": "Literature"
         /// }
         /// </remarks>
         /// <param name="course"></param>
@@ -112,7 +111,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="teacherId">The id of the teacher to be appointed for this course</param>
         /// <param name="course"></param>
         /// <returns></returns>
-        [HttpPut("{id:int}/teachers/{teacherId:int}")]
+        [HttpPut("{id:int}/Teachers/{teacherId:int}")]
         public async Task<IActionResult> AppointTeacherForCourse(int id, int teacherId, [FromBody] CourseUpdateDto course)
         {
             if (course is null)

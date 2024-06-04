@@ -1,4 +1,6 @@
-﻿namespace Shared.Dtos.StudentDtos;
+﻿using Shared.Dtos.CourseDtos;
 
-public record StudentResponseDto(int Id, string FirstName, string LastName);
+namespace Shared.Dtos.StudentDtos;
+
+public record StudentResponseDto(int Id, string FirstName, string LastName, List<CourseShortResponseDto> Courses);
 

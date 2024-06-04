@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.Dtos.StudentDtos;
 
@@ -62,7 +61,7 @@ public class StudentsController : ControllerBase
     public async Task<IActionResult> CreateStudent([FromBody]StudentCreateDto student)
     {
         if (student is null)
-            return BadRequest("StudentCreateDto object is null");
+            return BadRequest($"{nameof(StudentCreateDto)} object is null");
 
         if (!ModelState.IsValid)
             return UnprocessableEntity(ModelState);
@@ -78,7 +77,7 @@ public class StudentsController : ControllerBase
     /// </summary>
     /// <remarks>
     /// Sample request
-    /// PUT api/students
+    /// PUT api/students/1
     /// {
     ///     "firstName": "Jane",
     ///     "lastName": "Doe"
@@ -91,7 +90,7 @@ public class StudentsController : ControllerBase
     public async Task<IActionResult> UpdateStudent(int id, [FromBody]StudentUpdateDto student)
     {
         if (student is null)
-            return BadRequest("StudentCreateDto object is null");
+            return BadRequest($"{nameof(StudentUpdateDto)} object is null");
 
         if (!ModelState.IsValid)
             return UnprocessableEntity(ModelState);
@@ -100,6 +99,27 @@ public class StudentsController : ControllerBase
 
         return NoContent();
     }
+    /// <summary>
+    /// Enrolls the student in the course.
+    /// </summary>
+    /// <param name="id">The id of the student to be enrolled</param>
+    /// <param name="courseId">The id of the course to enroll the student in</param>
+    /// <param name="student">student dto</param>
+    /// <returns></returns>
+    [HttpPut("{id:int}/Courses/{courseId:int}")]
+    public async Task<IActionResult> EnrollStudentInCourse(int id, int courseId, [FromBody] StudentUpdateDto student)
+    {
+        if (student is null)
+            return BadRequest($"{nameof(StudentUpdateDto)} object is null");
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
+        await _service.StudentService.EnrollStudentInCourseAsync(id, courseId, student, trackChanges: true);
+
+        return NoContent();
+    }
+
 
     /// <summary>
     /// Deletes the student with the provided id from the database.

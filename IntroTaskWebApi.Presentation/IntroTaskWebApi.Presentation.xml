@@ -38,7 +38,7 @@
             </summary>
             <remarks>
             Sample request
-            PUT api/students
+            PUT api/students/1
             {
                 "firstName": "Jane",
                 "lastName": "Doe"
@@ -46,6 +46,15 @@
             </remarks>
             <param name="id"></param>
             <param name="student"></param>
+            <returns></returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.EnrollStudentInCourse(System.Int32,System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
+            <summary>
+            Enrolls the student in the course.
+            </summary>
+            <param name="id">The id of the student to be enrolled</param>
+            <param name="courseId">The id of the course to enroll the student in</param>
+            <param name="student">student dto</param>
             <returns></returns>
         </member>
         <member name="M:IntroTask.Presentation.Controllers.StudentsController.DeleteStudent(System.Int32)">
@@ -76,8 +85,7 @@
             Sample request
             POST api/courses
             {
-                "title": "Literature",
-                "teacherId": 2
+                "title": "Literature"
             }
             </remarks>
             <param name="course"></param>
