@@ -59,6 +59,31 @@ internal sealed class TeacherService : ITeacherService
         return responseDto;
     }
 
+    public async Task ResignTeacherFromCourse(int id, int courseId, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
+    {
+        var teacher = await _repository.Teacher.GetTeacherByIdAsync(
+            id,
+            trackChanges)
+        ?? throw new TeacherNotFoundException(id);
+
+        var course = await _repository.Course.GetCourseByIdAsync(
+            courseId,
+            trackChanges)
+        ?? throw new CourseNotFoundException(courseId);
+
+        var isTeacherAppointedForCourse = teacher.Courses!.Any(c => c.TeacherId == id);
+
+        if (isTeacherAppointedForCourse)
+        {
+            teacher.Courses!.Remove(course);
+
+            var updatedTeacher = _mapper.Map(teacherUpdateDto, teacher);
+            //course.Teacher = null;
+
+            await _repository.SaveAsync();
+        }
+    }
+
     public async Task UpdateTeacherAsync(int id, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
     {
         var teacher = await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)

@@ -33,7 +33,7 @@ public class TeachersController : ControllerBase
     /// <summary>
     /// Gets the teacher with the provided id.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">The teacher's to retrieve id</param>
     /// <returns>The teacher with the provided id from the database.</returns>
     [HttpGet("{id:int}", Name = "TeacherById")]
     [ProducesResponseType(200)]
@@ -52,11 +52,10 @@ public class TeachersController : ControllerBase
     /// Sample request
     /// POST api/courses
     /// {
-    ///     "name": "John Smith",
-    ///     "courseId": 2
+    ///     "name": "John Smith"
     /// }
     /// </remarks>
-    /// <param name="teacher"></param>
+    /// <param name="teacher">TeacherCreateDto</param>
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(201)]
@@ -86,17 +85,17 @@ public class TeachersController : ControllerBase
     ///     "name": "John Smith"
     /// }
     /// </remarks>
-    /// <param name="id"></param>
-    /// <param name="teacher"></param>
+    /// <param name="id">The teacher's to update id</param>
+    /// <param name="teacher">TeacherUpdateDto</param>
     /// <returns></returns>
     [HttpPut("{id:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(422)]
     public async Task<IActionResult> UpdateTeacher(int id, [FromBody] TeacherUpdateDto teacher)
     {
         if (teacher is null)
-            return BadRequest($"{nameof(TeacherCreateDto)} object is null");
+            return BadRequest($"{nameof(TeacherUpdateDto)} object is null");
 
         if (!ModelState.IsValid)
             return UnprocessableEntity(ModelState);
@@ -107,9 +106,33 @@ public class TeachersController : ControllerBase
     }
 
     /// <summary>
+    /// Resigns the teacher from the course.
+    /// </summary>
+    /// <param name="id">The teacher's to resign id</param>
+    /// <param name="courseId">The id of the course to resign the teacher from</param>
+    /// <param name="teacher">TeacherUpdateDto</param>
+    /// <returns></returns>
+    [HttpPut("{id:int}/Courses/{courseId:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(422)]
+    public async Task<IActionResult> ResignTeacherFromCourse(int id, int courseId, [FromBody] TeacherUpdateDto teacher)
+    {
+        if (teacher is null)
+            return BadRequest($"{nameof(TeacherUpdateDto)} object is null");
+
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
+        await _service.TeacherService.ResignTeacherFromCourse(id, courseId, teacher, trackChanges: true);
+
+        return NoContent();
+    }
+
+    /// <summary>
     /// Deletes the teacher with the provided id from the database.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">The teacher's to delete id</param>
     /// <returns></returns>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(204)]

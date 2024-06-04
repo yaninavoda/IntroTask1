@@ -33,7 +33,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <summary>
         /// Gets the course with the provided id.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">The course's to retrieve id</param>
         /// <returns>The course with the provided id from the database.</returns>
         [HttpGet("{id:int}", Name = "CourseById")]
         [ProducesResponseType(200)]
@@ -55,7 +55,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         ///     "title": "Literature"
         /// }
         /// </remarks>
-        /// <param name="course"></param>
+        /// <param name="course">CourseCreateDto</param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(201)]
@@ -85,8 +85,8 @@ namespace IntroTaskWebApi.Presentation.Controllers
         ///     "title": "Literature"
         /// }
         /// </remarks>
-        /// <param name="id"></param>
-        /// <param name="course"></param>
+        /// <param name="id">The course's to update id</param>
+        /// <param name="course">CourseUpdateDto</param>
         /// <returns></returns>
         [HttpPut("{id:int}")]
         [ProducesResponseType(204)]
@@ -107,9 +107,9 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <summary>
         /// Appoints the teacher to the course.
         /// </summary>
-        /// <param name="id">This course's id</param>
+        /// <param name="id">The course's id</param>
         /// <param name="teacherId">The id of the teacher to be appointed for this course</param>
-        /// <param name="course"></param>
+        /// <param name="course">CourseUpdateDto</param>
         /// <returns></returns>
         [HttpPut("{id:int}/Teachers/{teacherId:int}")]
         public async Task<IActionResult> AppointTeacherForCourse(int id, int teacherId, [FromBody] CourseUpdateDto course)
@@ -130,7 +130,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// </summary>
         /// <param name="id">The id of the course</param>
         /// <param name="studentId">The id of the student to be excluded</param>
-        /// <param name="course">course dto</param>
+        /// <param name="course">CourseUpdateDto</param>
         /// <returns></returns>
         [HttpPut("{id:int}/Students/{studentId:int}")]
         public async Task<IActionResult> ExcludeStudentFromCourse(int id, int studentId, [FromBody] CourseUpdateDto course)
@@ -150,7 +150,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// Deletes the course with the provided id from the database.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>The course's to delete id</returns>
         [HttpDelete("{id:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]

@@ -9,4 +9,5 @@ public interface ITeacherService
     Task<TeacherShortResponseDto> CreateTeacherAsync(TeacherCreateDto teacherCreateDto);
     Task DeleteTeacherAsync(int id, bool trackChanges);
     Task UpdateTeacherAsync(int id, TeacherUpdateDto teacherUpdateDto, bool trackChanges);
+    Task ResignTeacherFromCourse(int id, int courseId, TeacherUpdateDto teacherUpdateDto, bool trackChanges);
 }

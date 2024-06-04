@@ -31,7 +31,7 @@ public class StudentsController : ControllerBase
     /// <summary>
     /// Gets the student with the provided id.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">the student's to retrieve id</param>
     /// <returns>The student with the provided id from the database.</returns>
     [HttpGet("{id:int}", Name = "StudentById")]
     public async Task<IActionResult> GetStudent(int id)
@@ -52,7 +52,7 @@ public class StudentsController : ControllerBase
     ///     "lastName": "Doe"
     /// }
     /// </remarks>
-    /// <param name="student"></param>
+    /// <param name="student">StudentCreateDto</param>
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(201)]
@@ -83,10 +83,13 @@ public class StudentsController : ControllerBase
     ///     "lastName": "Doe"
     /// }
     /// </remarks>
-    /// <param name="id"></param>
-    /// <param name="student"></param>
+    /// <param name="id">the student's to update id</param>
+    /// <param name="student">StudentUpdateDto</param>
     /// <returns></returns>
     [HttpPut("{id:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(422)]
     public async Task<IActionResult> UpdateStudent(int id, [FromBody]StudentUpdateDto student)
     {
         if (student is null)
@@ -107,6 +110,9 @@ public class StudentsController : ControllerBase
     /// <param name="student">student dto</param>
     /// <returns></returns>
     [HttpPut("{id:int}/Courses/{courseId:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(422)]
     public async Task<IActionResult> EnrollStudentInCourse(int id, int courseId, [FromBody] StudentUpdateDto student)
     {
         if (student is null)
@@ -124,9 +130,11 @@ public class StudentsController : ControllerBase
     /// <summary>
     /// Deletes the student with the provided id from the database.
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">the student's to delete id</param>
     /// <returns></returns>
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteStudent(int id)
     {
         await _service.StudentService.DeleteStudentAsync(id, trackChanges: false);
