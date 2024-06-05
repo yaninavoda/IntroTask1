@@ -72,7 +72,7 @@ public sealed class TeacherService : ITeacherService
             trackChanges)
         ?? throw new CourseNotFoundException(courseId);
 
-        var isTeacherAppointedForCourse = teacher.Courses!.Contains(course);
+        var isTeacherAppointedForCourse = course.TeacherId == id;
 
         if (!isTeacherAppointedForCourse)
         {
