@@ -64,13 +64,13 @@ public class DeleteTeacherTests
         // Arrange
         SetupRepositoryMockThrowsException(id);
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+       
+     var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Assert
         var ex = Assert.ThrowsAsync<TeacherNotFoundException>(async () =>
             await _sut.DeleteTeacherAsync(id, trackChanges));
     }
-
     private static Teacher GetTeacher()
     {
         return new Teacher
