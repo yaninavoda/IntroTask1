@@ -11,6 +11,7 @@ public class DeleteTeacherTests
 {
     private Mock<IRepositoryManager> _repositoryMock;
     private Mock<IMapper> _mapperMock;
+    private TeacherService? _sut;
 
     [SetUp]
     public void Setup()
@@ -26,7 +27,7 @@ public class DeleteTeacherTests
         // Arrange
         SetupRepositoryMockReturnsSingleEntity();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         await _sut.DeleteTeacherAsync(id, trackChanges);
@@ -45,7 +46,7 @@ public class DeleteTeacherTests
         // Arrange
         SetupRepositoryMockReturnsSingleEntity();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         await _sut.DeleteTeacherAsync(id, trackChanges);
@@ -65,7 +66,7 @@ public class DeleteTeacherTests
         SetupRepositoryMockThrowsException(id);
 
        
-     var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+     _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Assert
         var ex = Assert.ThrowsAsync<TeacherNotFoundException>(async () =>

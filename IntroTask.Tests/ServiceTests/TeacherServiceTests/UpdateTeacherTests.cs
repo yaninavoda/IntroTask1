@@ -11,6 +11,7 @@ public class UpdateTeacherTests
 {
     private Mock<IRepositoryManager> _repositoryMock;
     private Mock<IMapper> _mapperMock;
+    private TeacherService? _sut;
 
     [SetUp]
     public void Setup()
@@ -26,7 +27,7 @@ public class UpdateTeacherTests
         // Arrange
         SetupMocksPositiveScenario();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         await _sut.UpdateTeacherAsync(id, GetTeacherUpdateDto(), trackChanges);
@@ -45,7 +46,7 @@ public class UpdateTeacherTests
         // Arrange
         SetupMocksPositiveScenario();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         await _sut.UpdateTeacherAsync(id, GetTeacherUpdateDto(), trackChanges);
@@ -66,7 +67,7 @@ public class UpdateTeacherTests
         SetupMocksPositiveScenario();
         _repositoryMock.Setup(repo => repo.SaveAsync()).ThrowsAsync(new Exception());
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act & Assert
         Assert.ThrowsAsync<Exception>(async () => await _sut.UpdateTeacherAsync(id, GetTeacherUpdateDto(), trackChanges));

@@ -12,6 +12,7 @@ namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
     {
     private Mock<IRepositoryManager> _repositoryMock;
     private Mock<IMapper> _mapperMock;
+    private TeacherService? _sut;
 
     [SetUp]
     public void Setup()
@@ -28,7 +29,7 @@ namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
         SetupRepositoryMockReturnsSingleEntity();
         SetupMapperMockReturnsSigleDto();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var result = await _sut.GetTeacherByIdAsync(id, trackChanges);
@@ -45,7 +46,7 @@ namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
         SetupRepositoryMockReturnsSingleEntity();
         SetupMapperMockReturnsSigleDto();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var result = await _sut.GetTeacherByIdAsync(id, trackChanges);
@@ -61,7 +62,7 @@ namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
         // Arrange
         SetupRepositoryMockThrowsException(id);
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Assert
         var ex = Assert.ThrowsAsync<TeacherNotFoundException>(async () =>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contracts;
+using Entities.Exceptions;
 using IntroTask.Entities;
 using Moq;
 using Service;
@@ -11,7 +12,7 @@ public class ResignTeacherFromCourseTests
 {
     private Mock<IRepositoryManager> _repositoryMock;
     private Mock<IMapper> _mapperMock;
-    private TeacherService _sut;
+    private TeacherService? _sut;
 
     [SetUp]
     public void Setup()
@@ -99,7 +100,52 @@ public class ResignTeacherFromCourseTests
 
     [TestCase(1, 1, true)]
     [TestCase(1, 1, false)]
-    public async Task UpdateTeacherAsync_ShouldThrowException_IfSaveOperationFails(int id, int courseId, bool trackChanges)
+    public async Task ResignTeacherFromCourse_ShouldThrowException_IfTeacherIsNotFound(int id, int courseId, bool trackChanges)
+    {
+        // Arrange
+        SetupMocksTeacherNotFound(id);
+
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+
+        // Act & Assert
+        Assert.ThrowsAsync<TeacherNotFoundException>(async () => await _sut.ResignTeacherFromCourse(id, courseId, GetTeacherUpdateDto(), trackChanges));
+    }
+
+    [TestCase(1, 1, true)]
+    [TestCase(1, 1, false)]
+    public async Task ResignTeacherFromCourse_ShouldThrowException_IfCourseIsNotFound(
+        int id,
+        int courseId,
+        bool trackChanges)
+    {
+        // Arrange
+        SetupMocksCourseNotFound(courseId);
+
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+
+        // Act & Assert
+        Assert.ThrowsAsync<CourseNotFoundException>(async () => await _sut.ResignTeacherFromCourse(id, courseId, GetTeacherUpdateDto(), trackChanges));
+    }
+
+    [TestCase(1, 1, true)]
+    [TestCase(1, 1, false)]
+    public async Task ResignTeacherFromCourse_ShouldThrowException_IfTeacherCourseNotConnected(
+        int id,
+        int courseId,
+        bool trackChanges)
+    {
+        // Arrange
+        SetupMocksNotConnectedEntities();
+
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+
+        // Act & Assert
+        Assert.ThrowsAsync<TeacherCourseNotConnectedException>(async () => await _sut.ResignTeacherFromCourse(id, courseId, GetTeacherUpdateDto(), trackChanges));
+    }
+
+    [TestCase(1, 1, true)]
+    [TestCase(1, 1, false)]
+    public async Task ResignTeacherFromCourse_ShouldThrowException_IfSaveOperationFails(int id, int courseId, bool trackChanges)
     {
         // Arrange
         SetupMocksSaveOperationFailed();
@@ -128,12 +174,46 @@ public class ResignTeacherFromCourseTests
         _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
             It.IsAny<int>(),
             It.IsAny<bool>()))
-                .ReturnsAsync(GetCourse());
+                .ReturnsAsync(GetCourse(teacherId: 1));
 
         _mapperMock.Setup(m => m.Map(It.IsAny<TeacherUpdateDto>(),
             It.IsAny<Teacher>())).Returns(GetTeacher());
 
         _repositoryMock.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
+    }
+
+    private void SetupMocksNotConnectedEntities()
+    {
+        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
+            It.IsAny<int>(),
+            It.IsAny<bool>()))
+                .ReturnsAsync(GetTeacherWithWrongCourse());
+
+        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
+            It.IsAny<int>(),
+            It.IsAny<bool>()))
+                .ReturnsAsync(GetCourse(teacherId: 2));
+    }
+
+    private void SetupMocksTeacherNotFound(int id)
+    {
+        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
+            It.IsAny<int>(),
+            It.IsAny<bool>()))
+                .ThrowsAsync(new TeacherNotFoundException(id));
+    }
+
+    private void SetupMocksCourseNotFound(int id)
+    {
+        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
+            It.IsAny<int>(),
+            It.IsAny<bool>()))
+                .ReturnsAsync(GetTeacherWithCourse());
+
+        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
+            It.IsAny<int>(),
+            It.IsAny<bool>()))
+                .ThrowsAsync(new CourseNotFoundException(id));
     }
 
     private void SetupMocksSaveOperationFailed()
@@ -146,7 +226,7 @@ public class ResignTeacherFromCourseTests
         _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
             It.IsAny<int>(),
             It.IsAny<bool>()))
-                .ReturnsAsync(GetCourse());
+                .ReturnsAsync(GetCourse(teacherId: 1));
 
         _mapperMock.Setup(m => m.Map(It.IsAny<TeacherUpdateDto>(),
             It.IsAny<Teacher>())).Returns(GetTeacher());
@@ -182,13 +262,31 @@ public class ResignTeacherFromCourseTests
         };
     }
 
-    private static Course GetCourse()
+    private static Teacher GetTeacherWithWrongCourse()
+    {
+        return new Teacher
+        {
+            Id = 1,
+            Name = "John Smith",
+            Courses = new List<Course>
+            {
+                new()
+                {
+                    Id = 2,
+                    Title = "Course 2",
+                    TeacherId = 2,
+                }
+            }
+        };
+    }
+
+    private static Course GetCourse(int teacherId)
     {
         return new Course()
         {
             Id = 1,
             Title = "Course 1",
-            TeacherId = 1
+            TeacherId = teacherId
         };
     }
 }

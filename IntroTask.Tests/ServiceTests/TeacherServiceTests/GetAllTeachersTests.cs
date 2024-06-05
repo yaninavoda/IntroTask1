@@ -12,6 +12,7 @@ public class GetAllTeachersTests
 {
     private Mock<IRepositoryManager> _repositoryMock;
     private Mock<IMapper> _mapperMock;
+    private TeacherService? _sut;
 
     [SetUp]
     public void Setup()
@@ -28,7 +29,7 @@ public class GetAllTeachersTests
         SetupRepositoryMockReturnsDataCollection();
         SetupMapperMockReturnsDataCollection();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges);
@@ -42,18 +43,16 @@ public class GetAllTeachersTests
     public async Task GetAllTeachersAsync_ShouldReturnCorrectAmmountOfDtos_IfTeachersExist(bool trackChanges)
     {
         // Arrange
-
-        var teachers = GetTeachers();
         SetupRepositoryMockReturnsDataCollection();
         SetupMapperMockReturnsDataCollection();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges);
 
         // Assert
-        Assert.That(teacherDtos.Count, Is.EqualTo(teachers.Count()));
+        Assert.That(teacherDtos.Count, Is.EqualTo(GetTeachers().Count()));
     }
 
     [TestCase(true)]
@@ -64,7 +63,7 @@ public class GetAllTeachersTests
         SetupRepositoryMockReturnsDataCollection();
         SetupMapperMockReturnsDataCollection();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges);
@@ -80,7 +79,7 @@ public class GetAllTeachersTests
         // Arrange
         SetupRepositoryMockReturnsEmptyCollection();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges: false);

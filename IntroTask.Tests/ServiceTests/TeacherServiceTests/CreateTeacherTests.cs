@@ -11,6 +11,7 @@ public class CreateTeacherTests
 {
     private Mock<IRepositoryManager> _repositoryMock;
     private Mock<IMapper> _mapperMock;
+    private TeacherService? _sut;
 
     [SetUp]
     public void Setup()
@@ -25,7 +26,7 @@ public class CreateTeacherTests
         // Arrange
         SetupMockPositiveScenario();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var result = await _sut.CreateTeacherAsync(GetTeacherCreateDto());
@@ -34,17 +35,7 @@ public class CreateTeacherTests
         Assert.That(result, Is.TypeOf<TeacherShortResponseDto>());
     }
 
-    private void SetupMockPositiveScenario()
-    {
-        _mapperMock.Setup(m => m.Map<Teacher>(It.IsAny<TeacherCreateDto>()))
-                    .Returns(GetTeacher());
-
-        _repositoryMock.Setup(repo => repo.Teacher.CreateTeacher(GetTeacher())).Verifiable();
-        _repositoryMock.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
-
-        _mapperMock.Setup(m => m.Map<TeacherShortResponseDto>(It.IsAny<Teacher>()))
-            .Returns(GetTeacherShortResponseDto());
-    }
+    
 
     [Test]
     public async Task CreateTeacherAsync_ShouldReturnCorrectDto_IfSuppliedCorrectInput()
@@ -54,7 +45,7 @@ public class CreateTeacherTests
 
         SetupMockPositiveScenario();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
         var result = await _sut.CreateTeacherAsync(GetTeacherCreateDto());
@@ -66,10 +57,10 @@ public class CreateTeacherTests
     [Test]
     public async Task CreateTeacherAsync_ShouldThrowExceptionOnSaveFailure()
     {
-        SetupMockPositiveScenario();
-        _repositoryMock.Setup(repo => repo.SaveAsync()).ThrowsAsync(new Exception());
+        // Arrange
+        SetupMocksSaveOperationFailed();
 
-        var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act & Assert  
         Assert.ThrowsAsync<Exception>(async () => await _sut.CreateTeacherAsync(GetTeacherCreateDto()));
@@ -100,5 +91,30 @@ public class CreateTeacherTests
                 }
             }
         };
+    }
+
+    private void SetupMockPositiveScenario()
+    {
+        _mapperMock.Setup(m => m.Map<Teacher>(It.IsAny<TeacherCreateDto>()))
+                    .Returns(GetTeacher());
+
+        _repositoryMock.Setup(repo => repo.Teacher.CreateTeacher(GetTeacher())).Verifiable();
+        _repositoryMock.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
+
+        _mapperMock.Setup(m => m.Map<TeacherShortResponseDto>(It.IsAny<Teacher>()))
+            .Returns(GetTeacherShortResponseDto());
+    }
+
+    private void SetupMocksSaveOperationFailed()
+    {
+        _mapperMock.Setup(m => m.Map<Teacher>(It.IsAny<TeacherCreateDto>()))
+                    .Returns(GetTeacher());
+
+        _repositoryMock.Setup(repo => repo.Teacher.CreateTeacher(GetTeacher())).Verifiable();
+        _repositoryMock.Setup(repo => repo.SaveAsync()).ThrowsAsync(new Exception());
+
+
+        _mapperMock.Setup(m => m.Map<TeacherShortResponseDto>(It.IsAny<Teacher>()))
+            .Returns(GetTeacherShortResponseDto());
     }
 }
