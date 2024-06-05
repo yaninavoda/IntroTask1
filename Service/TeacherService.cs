@@ -72,17 +72,18 @@ public sealed class TeacherService : ITeacherService
             trackChanges)
         ?? throw new CourseNotFoundException(courseId);
 
-        var isTeacherAppointedForCourse = teacher.Courses!.Any(c => c.TeacherId == id);
+        var isTeacherAppointedForCourse = teacher.Courses!.Contains(course);
 
-        if (isTeacherAppointedForCourse)
+        if (!isTeacherAppointedForCourse)
         {
-            teacher.Courses!.Remove(course);
-
-            var updatedTeacher = _mapper.Map(teacherUpdateDto, teacher);
-            //course.Teacher = null;
-
-            await _repository.SaveAsync();
+            throw new TeacherCourseNotConnectedException(id, courseId);
         }
+
+        teacher.Courses!.Remove(course);
+
+        _mapper.Map(teacherUpdateDto, teacher);
+
+        await _repository.SaveAsync();
     }
 
     public async Task UpdateTeacherAsync(int id, TeacherUpdateDto teacherUpdateDto, bool trackChanges)

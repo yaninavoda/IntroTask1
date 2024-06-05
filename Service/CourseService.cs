@@ -90,6 +90,7 @@ internal sealed class CourseService : ICourseService
         teacher.Courses!.Add(course);
 
         _mapper.Map(courseDto, course);
+
         course.TeacherId = teacherId;
         course.Teacher = teacher;
 
@@ -104,16 +105,18 @@ internal sealed class CourseService : ICourseService
         var course = await _repository.Course.GetCourseByIdAsync(id, trackChanges)
             ?? throw new CourseNotFoundException(id);
 
-        var isEnrolled = student.Courses.Any(c => c.Students.Any(s => s.Id == studentId));
+        var isEnrolled = student.Courses.Contains(course);
 
-        if (isEnrolled)
+        if (!isEnrolled)
         {
-            student.Courses.Remove(course);
-            course.Students.Remove(student);
-
-            _mapper.Map(courseDto, course);
-
-            await _repository.SaveAsync();
+            throw new StudentCourseNotConnectedException(studentId, id);
         }
+
+        student.Courses.Remove(course);
+        course.Students.Remove(student);
+
+        _mapper.Map(courseDto, course);
+
+        await _repository.SaveAsync();  
     }
 }

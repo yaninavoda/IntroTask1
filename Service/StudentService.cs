@@ -47,17 +47,21 @@ internal sealed class StudentService : IStudentService
         var course = await _repository.Course.GetCourseByIdAsync(courseId, trackChanges)
             ?? throw new CourseNotFoundException(courseId);
 
-        var isAlreadyEnrolled = student.Courses.Any(c => c.Students.Any(s => s.Id == studentId));
+        var isAlreadyEnrolled = student.Courses.Contains(course);
 
-        if (! isAlreadyEnrolled)
+        if (isAlreadyEnrolled)
         {
-            student.Courses.Add(course);
-            course.Students.Add(student);
-        
-            _mapper.Map(studentUpdateDto, student);
-
-            await _repository.SaveAsync();
+            throw new StudentCourseAlreadyConnectedException(
+                studentId,
+                courseId);
         }
+
+        student.Courses.Add(course);
+        course.Students.Add(student);
+
+        _mapper.Map(studentUpdateDto, student);
+
+        await _repository.SaveAsync();
     }
 
     public async Task<IEnumerable<StudentShortResponseDto>> GetAllStudentsAsync(bool trackChanges)

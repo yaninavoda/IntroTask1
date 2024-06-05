@@ -26,6 +26,8 @@ public class GlobalExceptionHandler : IExceptionHandler
             httpContext.Response.StatusCode = contextFeature.Error switch
             {
                 NotFoundException => StatusCodes.Status404NotFound,
+                EntitiesNotConnectedException => StatusCodes.Status400BadRequest,
+                EntitiesAlreadyConnectedException => StatusCodes.Status400BadRequest,
                 _ => StatusCodes.Status500InternalServerError
             };
 
