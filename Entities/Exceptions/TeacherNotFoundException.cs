@@ -1,9 +1,6 @@
 ﻿namespace Entities.Exceptions;
 
-public sealed class TeacherNotFoundException : NotFoundException
+public sealed class TeacherNotFoundException(int teacherId)
+    : NotFoundException($"The teacher with id: {teacherId} doesn't exist in the database.")
 {
-    public TeacherNotFoundException(int teacherId)
-    : base($"The teacher with id: {teacherId} doesn't exist in the database.")
-    {
-    }
 }

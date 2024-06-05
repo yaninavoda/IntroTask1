@@ -2,12 +2,13 @@
 using Contracts;
 using IntroTask.Entities;
 using Moq;
+using NUnit.Framework.Internal;
 using Service;
 using Shared.Dtos.TeacherDtos;
 
-namespace IntroTask.Tests.ServiceTests;
+namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
 
-public class TeacherServiceTests
+public class GetAllTeachersTests
 {
     private Mock<IRepositoryManager> _repositoryMock;
     private Mock<IMapper> _mapperMock;
@@ -21,13 +22,11 @@ public class TeacherServiceTests
 
     [TestCase(true)]
     [TestCase(false)]
-    public async Task GetAllTeachersAsync_ShouldReturnTeacherShortResponseDtos_IrrespectiveToTrackChanges(bool trackChanges)
+    public async Task GetAllTeachersAsync_ShouldReturnTeacherShortResponseDtos_IfTeachersExist(bool trackChanges)
     {
         // Arrange
-        var teachers = GetTeachers();
-        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>())).ReturnsAsync(GetTeachers());
-        _mapperMock.Setup(m => m.Map<List<TeacherShortResponseDto>>(It.IsAny<IEnumerable<Teacher>>()))
-                .Returns(GetTeacherShortResponseDtos());
+        SetupRepositoryMockReturnsDataCollection();
+        SetupMapperMockReturnsDataCollection();
 
         var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
@@ -45,11 +44,8 @@ public class TeacherServiceTests
         // Arrange
 
         var teachers = GetTeachers();
-        var teacherResponseDtos = GetTeacherShortResponseDtos();
-
-        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>())).ReturnsAsync(teachers);
-        _mapperMock.Setup(m => m.Map<List<TeacherShortResponseDto>>(It.IsAny<IEnumerable<Teacher>>()))
-                .Returns(teacherResponseDtos);
+        SetupRepositoryMockReturnsDataCollection();
+        SetupMapperMockReturnsDataCollection();
 
         var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
@@ -62,16 +58,11 @@ public class TeacherServiceTests
 
     [TestCase(true)]
     [TestCase(false)]
-    public async Task GetAllTeachersAsync_ShouldBeCalledOnce(bool trackChanges)
+    public async Task GetAllTeachersAsync_ShouldBeCalledOnce_IfTeacherExist(bool trackChanges)
     {
         // Arrange
-
-        var teachers = GetTeachers();
-        var teacherResponseDtos = GetTeacherShortResponseDtos();
-
-        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>())).ReturnsAsync(teachers);
-        _mapperMock.Setup(m => m.Map<List<TeacherShortResponseDto>>(It.IsAny<IEnumerable<Teacher>>()))
-                .Returns(teacherResponseDtos);
+        SetupRepositoryMockReturnsDataCollection();
+        SetupMapperMockReturnsDataCollection();
 
         var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
@@ -84,12 +75,10 @@ public class TeacherServiceTests
 
 
     [Test]
-    [Category("Empty List")]
     public async Task GetAllTeachersAsync_ShouldReturnEmptyList_IfNoTeachersFound()
     {
         // Arrange
-        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>()))
-        .ReturnsAsync(new List<Teacher>());
+        SetupRepositoryMockReturnsEmptyCollection();
 
         var _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
@@ -98,6 +87,28 @@ public class TeacherServiceTests
 
         // Assert
         Assert.That(teacherDtos, Is.Empty);
+    }
+
+    private static TeacherResponseDto GetTeacherResponseDto()
+    {
+        return new(1, "John Smith", [new(1, "Course 1")]);
+    }
+
+    private static Teacher GetTeacher()
+    {
+        return new Teacher
+        {
+            Id = 1,
+            Name = "John Smith",
+            Courses = new List<Course>
+            {
+                new()
+                { Id = 1,
+                    Title = "Course 1",
+                    TeacherId = 1
+                }
+            }
+        };
     }
 
     private static List<TeacherShortResponseDto> GetTeacherShortResponseDtos()
@@ -129,4 +140,24 @@ public class TeacherServiceTests
 
         return teachers;
     }
+
+    private void SetupMapperMockReturnsDataCollection()
+    {
+        _mapperMock.Setup(m => m.Map<List<TeacherShortResponseDto>>(It.IsAny<IEnumerable<Teacher>>()))
+                        .Returns(GetTeacherShortResponseDtos());
+    }
+
+    private void SetupRepositoryMockReturnsDataCollection()
+    {
+        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>()))
+            .ReturnsAsync(GetTeachers());
+    }
+
+    private void SetupRepositoryMockReturnsEmptyCollection()
+    {
+        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>()))
+                .ReturnsAsync(new List<Teacher>());
+    }
+
+    
 }
