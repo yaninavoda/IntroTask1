@@ -46,7 +46,7 @@ internal sealed class CourseService : ICourseService
     public async Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync(bool trackChanges)
     {
         var courses = await _repository.Course.GetAllCoursesAsync(trackChanges);
-        var responseDtos = _mapper.Map<IEnumerable<CourseShortResponseDto>>(courses);
+        var responseDtos = _mapper.Map<List<CourseShortResponseDto>>(courses);
 
         return responseDtos;
     }

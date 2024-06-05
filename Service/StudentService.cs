@@ -7,7 +7,7 @@ using Shared.Dtos.StudentDtos;
 
 namespace Service;
 
-internal sealed class StudentService : IStudentService
+public sealed class StudentService : IStudentService
 {
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
@@ -67,7 +67,7 @@ internal sealed class StudentService : IStudentService
     public async Task<IEnumerable<StudentShortResponseDto>> GetAllStudentsAsync(bool trackChanges)
     {
         var students = await _repository.Student.GetAllStudentsAsync(trackChanges);
-        var studentDtos = _mapper.Map<IEnumerable<StudentShortResponseDto>>(students);
+        var studentDtos = _mapper.Map<List<StudentShortResponseDto>>(students);
 
         return studentDtos;
     }
