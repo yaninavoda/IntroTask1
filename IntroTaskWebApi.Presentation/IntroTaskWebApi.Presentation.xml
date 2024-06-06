@@ -173,7 +173,7 @@
             <param name="teacher">TeacherUpdateDto</param>
             <returns></returns>
         </member>
-        <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.ResignTeacherFromCourse(System.Int32,System.Int32,Shared.Dtos.TeacherDtos.TeacherUpdateDto)">
+        <member name="M:IntroTaskWebApi.Presentation.Controllers.TeachersController.ResignTeacherFromCourse(System.Int32,System.Int32,Shared.Dtos.TeacherDtos.TeacherUpdateDto,System.Boolean)">
             <summary>
             Resigns the teacher from the course.
             </summary>

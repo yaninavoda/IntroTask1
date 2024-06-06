@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
-using Shared.Dtos.CourseDtos;
 using Shared.Dtos.TeacherDtos;
 
 namespace IntroTaskWebApi.Presentation.Controllers;
@@ -116,7 +115,7 @@ public class TeachersController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [ProducesResponseType(422)]
-    public async Task<IActionResult> ResignTeacherFromCourse(int id, int courseId, [FromBody] TeacherUpdateDto teacher)
+    public async Task<IActionResult> ResignTeacherFromCourse(int id, int courseId, [FromBody] TeacherUpdateDto teacher, bool v)
     {
         if (teacher is null)
             return BadRequest($"{nameof(TeacherUpdateDto)} object is null");
