@@ -112,7 +112,10 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="course">CourseUpdateDto</param>
         /// <returns></returns>
         [HttpPut("{id:int}/Teachers/{teacherId:int}")]
-        public async Task<IActionResult> AppointTeacherForCourse(int id, int teacherId, [FromBody] CourseUpdateDto course)
+        public async Task<IActionResult> AppointTeacherForCourse(
+            int id,
+            int teacherId,
+            [FromBody] CourseUpdateDto course)
         {
             if (course is null)
                 return BadRequest($"{nameof(CourseUpdateDto)} object is null");

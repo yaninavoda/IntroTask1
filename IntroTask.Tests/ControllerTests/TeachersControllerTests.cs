@@ -1,5 +1,4 @@
-﻿using Entities.Exceptions;
-using IntroTask.Entities;
+﻿using IntroTask.Presentation.Controllers;
 using IntroTaskWebApi.Presentation.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -25,8 +24,9 @@ public class TeachersControllerTests
     public async Task GetTeachers_ShouldReturnOkObjectResult()
     {
         // Arrange
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
         _mockTeacherService.Setup(s => s.GetAllTeachersAsync(false))
             .ReturnsAsync(GetTeacherShortResponseDtos(2));
 
@@ -44,8 +44,9 @@ public class TeachersControllerTests
     public async Task GetTeachers_ShouldReturnListOfTeachers(int countToReturn)
     {
         // Arrange
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
         _mockTeacherService.Setup(s => s.GetAllTeachersAsync(false))
             .ReturnsAsync(GetTeacherShortResponseDtos(countToReturn));
 
@@ -64,7 +65,9 @@ public class TeachersControllerTests
         // Arrange
         var expected = GetTeacherResponseDto();
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _mockTeacherService.Setup(s => s.GetTeacherByIdAsync(teacherId, false))
             .ReturnsAsync(GetTeacherResponseDto());
 
@@ -84,7 +87,9 @@ public class TeachersControllerTests
         // Arrange
         var expected = GetTeacherResponseDto();
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _mockTeacherService.Setup(s => s.GetTeacherByIdAsync(teacherId, false))
             .ReturnsAsync(GetTeacherResponseDto());
 
@@ -106,7 +111,9 @@ public class TeachersControllerTests
 
         var createdTeacher = GetTeacherShortResponseDto();
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _mockTeacherService.Setup(s => s.CreateTeacherAsync(teacherCreateDto))
             .ReturnsAsync(createdTeacher);
 
@@ -130,7 +137,9 @@ public class TeachersControllerTests
         // Arrange
         TeacherCreateDto? teacherCreateDto = null;
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _sut = new TeachersController(_mockServiceManager.Object);
 
         // Act
@@ -145,13 +154,38 @@ public class TeachersControllerTests
         });
     }
 
+    [Test]
+    public async Task CreateTeacher_ShouldReturnUnprocessableEntityObjectResult_IfInvalidModel()
+    {
+        // Arrange
+        var createDto = GetTeacherCreateDto();
+
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
+        _sut = new TeachersController(_mockServiceManager.Object);
+        _sut.ModelState.AddModelError("Dto", "Invalid");
+
+        // Act
+        var result = await _sut.CreateTeacher(createDto);
+        var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<UnprocessableEntityObjectResult>());
+            Assert.That(unprocessableEntityObjectResult.Value, Is.TypeOf<SerializableError>());
+        });
+    }
+
     [TestCase(1)]
     public async Task UpdateTeacher_ShouldReturnNoContentResult_OnSuccess(int teacherId)
     {
         // Arrange
         var teacherUpdateDto = GetTeacherUpdateDto();
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
 
         _sut = new TeachersController(_mockServiceManager.Object);
 
@@ -169,7 +203,9 @@ public class TeachersControllerTests
         // Arrange
         TeacherUpdateDto? teacherUpdateDto = null;
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _sut = new TeachersController(_mockServiceManager.Object);
 
         // Act
@@ -184,13 +220,39 @@ public class TeachersControllerTests
         });
     }
 
+    [TestCase(1)]
+    public async Task UpdateTeacher_ShouldReturnUnprocessableEntityObjectResult_IfInvalidModel(int id)
+    {
+        // Arrange
+        var updateDto = GetTeacherUpdateDto();
+
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
+        _sut = new TeachersController(_mockServiceManager.Object);
+        _sut.ModelState.AddModelError("Dto", "Invalid");
+
+        // Act
+        var result = await _sut.UpdateTeacher(id, updateDto);
+        var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<UnprocessableEntityObjectResult>());
+            Assert.That(unprocessableEntityObjectResult.Value, Is.TypeOf<SerializableError>());
+        });
+    }
+
     [TestCase(1, 1)]
     public async Task ResignTeacherFromCourse_ShouldReturnNoContentResult_OnSuccess(int teacherId, int courseId)
     {
         // Arrange
         var teacherUpdateDto = GetTeacherUpdateDto();
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _mockTeacherService.Setup(s => s.ResignTeacherFromCourse(
             It.IsAny<int>(),
             It.IsAny<int>(),
@@ -214,7 +276,9 @@ public class TeachersControllerTests
         // Arrange
         TeacherUpdateDto? teacherUpdateDto = null;
 
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _sut = new TeachersController(_mockServiceManager.Object);
 
         // Act
@@ -229,11 +293,38 @@ public class TeachersControllerTests
         });
     }
 
+    [TestCase(1, 1)]
+    public async Task ResignTeacherFromCourse_ShouldReturnUnprocessableEntityObjectResult_IfInvalidModel(int teacherId, int courseId)
+    {
+        // Arrange
+        var updateDto = GetTeacherUpdateDto();
+
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
+        _sut = new TeachersController(_mockServiceManager.Object);
+
+        _sut.ModelState.AddModelError("Dto", "Invalid");
+
+        // Act
+        var result = await _sut.ResignTeacherFromCourse(teacherId, courseId, updateDto, true);
+        var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<UnprocessableEntityObjectResult>());
+            Assert.That(unprocessableEntityObjectResult.Value, Is.TypeOf<SerializableError>());
+        });
+    }
+
     [Test]
     public async Task DeleteTeacher_ShouldReturnNoContentResult_IfTeacherIsFound()
     {
         // Arrange
-        _mockServiceManager.Setup(s => s.TeacherService).Returns(_mockTeacherService.Object);
+        _mockServiceManager.Setup(s => s.TeacherService)
+            .Returns(_mockTeacherService.Object);
+
         _mockTeacherService.Setup(s => s.DeleteTeacherAsync(1, false))
             .Verifiable();
 

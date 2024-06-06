@@ -9,8 +9,8 @@ namespace IntroTask.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Title is a required field.")]
-        [MaxLength(60, ErrorMessage = "Maximum length for the Title is 60 characters.")]
+        [Required(ErrorMessage = "{0} is a required field.")]
+        [MaxLength(60, ErrorMessage = "Maximum length for the {0} is 60 characters.")]
         public string Title { get; set; } = string.Empty;
 
         [ForeignKey(nameof(Teacher))]

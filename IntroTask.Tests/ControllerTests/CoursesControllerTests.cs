@@ -1,5 +1,4 @@
-﻿using IntroTask.Presentation.Controllers;
-using IntroTaskWebApi.Presentation.Controllers;
+﻿using IntroTaskWebApi.Presentation.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Service.Contracts;
@@ -21,11 +20,13 @@ public class CoursesControllerTests
     }
 
     [Test]
-    public async Task GetStudents_ShouldReturnOkObjectResult()
+    public async Task GetCourses_ShouldReturnOkObjectResult()
     {
         // Arrange
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _mockCourseService.Setup(s => s.GetAllCoursesAsync(false))
             .ReturnsAsync(GetCourseShortResponseDtos(2));
 
@@ -45,6 +46,7 @@ public class CoursesControllerTests
         // Arrange
 
         _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+
         _mockCourseService.Setup(s => s.GetAllCoursesAsync(false))
             .ReturnsAsync(GetCourseShortResponseDtos(countToReturn));
 
@@ -63,7 +65,9 @@ public class CoursesControllerTests
         // Arrange
         var expected = GetCourseResponseDto();
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _mockCourseService.Setup(s => s.GetCourseByIdAsync(id, false))
             .ReturnsAsync(GetCourseResponseDto());
 
@@ -83,7 +87,9 @@ public class CoursesControllerTests
         // Arrange
         var expected = GetCourseResponseDto();
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _mockCourseService.Setup(s => s.GetCourseByIdAsync(id, false))
             .ReturnsAsync(GetCourseResponseDto());
 
@@ -105,7 +111,9 @@ public class CoursesControllerTests
 
         var createdResronseDto = GetCourseShortResponseDto();
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _mockCourseService.Setup(s => s.CreateCourseAsync(createDto))
             .ReturnsAsync(createdResronseDto);
 
@@ -129,7 +137,9 @@ public class CoursesControllerTests
         // Arrange
         CourseCreateDto? createDto = null;
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _sut = new CoursesController(_mockServiceManager.Object);
 
         // Act
@@ -144,13 +154,38 @@ public class CoursesControllerTests
         });
     }
 
+    [Test]
+    public async Task CreateCourse_ShouldReturnUnprocessableEntityObjectResult_IfInvalidModel()
+    {
+        // Arrange
+        var createDto = GetCourseCreateDto();
+
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
+        _sut = new CoursesController(_mockServiceManager.Object);
+        _sut.ModelState.AddModelError("Dto", "Invalid");
+
+        // Act
+        var result = await _sut.CreateCourse(createDto);
+        var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<UnprocessableEntityObjectResult>());
+            Assert.That(unprocessableEntityObjectResult.Value, Is.TypeOf<SerializableError>());
+        });
+    }
+
     [TestCase(1)]
     public async Task UpdateCourse_ShouldReturnNoContentResult_OnSuccess(int id)
     {
         // Arrange
         var updateDto = GetCourseUpdateDto();
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
 
         _sut = new CoursesController(_mockServiceManager.Object);
 
@@ -162,13 +197,39 @@ public class CoursesControllerTests
         Assert.That(result, Is.TypeOf<NoContentResult>());
     }
 
+    [TestCase(1)]
+    public async Task UpdateCourse_ShouldReturnUnprocessableEntityObjectResult_IfInvalidModel(int id)
+    {
+        // Arrange
+        var updateDto = GetCourseUpdateDto();
+
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
+        _sut = new CoursesController(_mockServiceManager.Object);
+        _sut.ModelState.AddModelError("Dto", "Invalid");
+
+        // Act
+        var result = await _sut.UpdateCourse(id, updateDto);
+        var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<UnprocessableEntityObjectResult>());
+            Assert.That(unprocessableEntityObjectResult.Value, Is.TypeOf<SerializableError>());
+        });
+    }
+
     [Test]
     public async Task UpdateCourse_ShouldReturnBadRequestObjectResult_IfDtoIsNull()
     {
         // Arrange
         CourseUpdateDto? updateDto = null;
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _sut = new CoursesController(_mockServiceManager.Object);
 
         // Act
@@ -183,58 +244,157 @@ public class CoursesControllerTests
         });
     }
 
-    // TODO: write ExcludeStudentFromCourse tests
-    // TODO: write AppointTeacherForCourse tests
     [TestCase(1, 1)]
-    public async Task ResignTeacherFromCourse_ShouldReturnNoContentResult_OnSuccess(int studentId, int courseId)
+    public async Task ExcludeStudentFromCourse_ShouldReturnNoContentResult_OnSuccess(int courseId, int studentId)
     {
         // Arrange
         var updateDto = GetCourseUpdateDto();
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
-        //_mockStudentService.Setup(s => s.ResignTeacherFromCourse(
-        //    It.IsAny<int>(),
-        //    It.IsAny<int>(),
-        //    It.IsAny<TeacherUpdateDto>(),
-        //    true)).Verifiable();
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
 
+        _mockCourseService.Setup(s => s.ExcludeStudentFromCourse(
+            It.IsAny<int>(),
+            It.IsAny<int>(),
+            It.IsAny<CourseUpdateDto>(),
+            true)).Verifiable();
 
         _sut = new CoursesController(_mockServiceManager.Object);
 
         // Act
-        //var result = await _sut.ResignTeacherFromCourse(teacherId, courseId, teacherUpdateDto, true);
-        //var noContentResult = (NoContentResult)result;
+        var result = await _sut.ExcludeStudentFromCourse(courseId, studentId, updateDto);
+        var noContentResult = (NoContentResult)result;
 
         // Assert
-        //Assert.That(result, Is.TypeOf<NoContentResult>());
+        Assert.That(result, Is.TypeOf<NoContentResult>());
     }
 
     [Test]
-    public async Task ResignTeacherFromCourse_ShouldReturnBadRequestObjectResult_IfDtoIsNull()
+    public async Task ExcludeStudentFromCourse_ShouldReturnBadRequestObjectResult_IfDtoIsNull()
     {
         // Arrange
-        //StudentUpdateDto? updateDto = null;
+        CourseUpdateDto? updateDto = null;
 
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _sut = new CoursesController(_mockServiceManager.Object);
 
         // Act
-        //var result = await _sut.ResignTeacherFromCourse(1, 1, updateDto, true);
-        //var badRequestResult = (BadRequestObjectResult)result;
+        var result = await _sut.ExcludeStudentFromCourse(1, 1, updateDto);
+        var badRequestResult = (BadRequestObjectResult)result;
 
-        //// Assert
-        //Assert.Multiple(() =>
-        //{
-        //    Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
-        //    Assert.That(badRequestResult.Value, Is.EqualTo($"{nameof(StudentUpdateDto)} object is null"));
-        //});
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            Assert.That(badRequestResult.Value, Is.EqualTo($"{nameof(CourseUpdateDto)} object is null"));
+        });
+    }
+
+    [TestCase(1, 1)]
+    public async Task ExcludeStudentFromCourse_ShouldReturnUnprocessableEntityObjectResult_IfInvalidModel(int courseId, int studentId)
+    {
+        // Arrange
+        var updateDto = GetCourseUpdateDto();
+
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
+        _sut = new CoursesController(_mockServiceManager.Object);
+        _sut.ModelState.AddModelError("Dto", "Invalid");
+
+        // Act
+        var result = await _sut.ExcludeStudentFromCourse(courseId, studentId, updateDto);
+        var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<UnprocessableEntityObjectResult>());
+            Assert.That(unprocessableEntityObjectResult.Value, Is.TypeOf<SerializableError>());
+        });
+    }
+
+    [TestCase(1, 1)]
+    public async Task AppointTeacherForCourse_ShouldReturnNoContentResult_OnSuccess(int courseId, int teacherId)
+    {
+        // Arrange
+        var updateDto = GetCourseUpdateDto();
+
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
+        _mockCourseService.Setup(s => s.AppointTeacherForCourse(
+            It.IsAny<int>(),
+            It.IsAny<int>(),
+            It.IsAny<CourseUpdateDto>(),
+            true)).Verifiable();
+
+        _sut = new CoursesController(_mockServiceManager.Object);
+
+        // Act
+        var result = await _sut.ExcludeStudentFromCourse(courseId, teacherId, updateDto);
+        var noContentResult = (NoContentResult)result;
+
+        // Assert
+        Assert.That(result, Is.TypeOf<NoContentResult>());
+    }
+
+    [Test]
+    public async Task AppointTeacherForCourse_ShouldReturnBadRequestObjectResult_IfDtoIsNull()
+    {
+        // Arrange
+        CourseUpdateDto? updateDto = null;
+
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
+        _sut = new CoursesController(_mockServiceManager.Object);
+
+        // Act
+        var result = await _sut.AppointTeacherForCourse(1, 1, updateDto);
+        var badRequestResult = (BadRequestObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+            Assert.That(badRequestResult.Value, Is.EqualTo($"{nameof(CourseUpdateDto)} object is null"));
+        });
+    }
+
+    [TestCase(1, 1)]
+    public async Task AppointTeacherForCourse_ShouldReturnUnprocessableEntityObjectResult_IfInvalidModel(int courseId, int teacherId)
+    {
+        // Arrange
+        var updateDto = GetCourseUpdateDto();
+
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
+        _sut = new CoursesController(_mockServiceManager.Object);
+        _sut.ModelState.AddModelError("Dto", "Invalid");
+
+        // Act
+        var result = await _sut.ExcludeStudentFromCourse(courseId, teacherId, updateDto);
+        var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.TypeOf<UnprocessableEntityObjectResult>());
+            Assert.That(unprocessableEntityObjectResult.Value, Is.TypeOf<SerializableError>());
+        });
     }
 
     [Test]
     public async Task DeleteCourse_ShouldReturnNoContentResult_IfCourseIsFound()
     {
         // Arrange
-        _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
+        _mockServiceManager.Setup(s => s.CourseService)
+            .Returns(_mockCourseService.Object);
+
         _mockCourseService.Setup(s => s.DeleteCourseAsync(1, false))
             .Verifiable();
 
