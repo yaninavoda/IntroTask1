@@ -35,8 +35,6 @@ public class CreateTeacherTests
         Assert.That(result, Is.TypeOf<TeacherShortResponseDto>());
     }
 
-    
-
     [Test]
     public async Task CreateTeacherAsync_ShouldReturnCorrectDto_IfSuppliedCorrectInput()
     {

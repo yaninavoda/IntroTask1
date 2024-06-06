@@ -88,28 +88,6 @@ public class GetAllTeachersTests
         Assert.That(teacherDtos, Is.Empty);
     }
 
-    private static TeacherResponseDto GetTeacherResponseDto()
-    {
-        return new(1, "John Smith", [new(1, "Course 1")]);
-    }
-
-    private static Teacher GetTeacher()
-    {
-        return new Teacher
-        {
-            Id = 1,
-            Name = "John Smith",
-            Courses = new List<Course>
-            {
-                new()
-                { Id = 1,
-                    Title = "Course 1",
-                    TeacherId = 1
-                }
-            }
-        };
-    }
-
     private static List<TeacherShortResponseDto> GetTeacherShortResponseDtos()
     {
         var dtos = new List<TeacherShortResponseDto>

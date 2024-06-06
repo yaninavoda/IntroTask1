@@ -8,7 +8,7 @@ using Shared.Dtos.StudentDtos;
 
 namespace Service;
 
-internal sealed class CourseService : ICourseService
+public sealed class CourseService : ICourseService
 {
     private readonly IRepositoryManager _repository;
     private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ internal sealed class CourseService : ICourseService
         _mapper = mapper;
     }
 
-    public async Task<CourseResponseDto> CreateCourseAsync(CourseCreateDto courseCreateDto)
+    public async Task<CourseShortResponseDto> CreateCourseAsync(CourseCreateDto courseCreateDto)
     {
         var course = _mapper.Map<Course>(courseCreateDto);
 
@@ -28,7 +28,7 @@ internal sealed class CourseService : ICourseService
 
         await _repository.SaveAsync();
 
-        var responseDto = _mapper.Map<CourseResponseDto>(course);
+        var responseDto = _mapper.Map<CourseShortResponseDto>(course);
 
         return responseDto;
     }
@@ -46,7 +46,8 @@ internal sealed class CourseService : ICourseService
     public async Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync(bool trackChanges)
     {
         var courses = await _repository.Course.GetAllCoursesAsync(trackChanges);
-        var responseDtos = _mapper.Map<List<CourseShortResponseDto>>(courses);
+        var responseDtos = _mapper.Map<List<CourseShortResponseDto>>(courses)
+            ?? [];
 
         return responseDtos;
     }
@@ -106,7 +107,7 @@ internal sealed class CourseService : ICourseService
             ?? throw new CourseNotFoundException(id);
 
         var isEnrolled = student.Courses.Contains(course);
-
+        
         if (!isEnrolled)
         {
             throw new StudentCourseNotConnectedException(studentId, id);

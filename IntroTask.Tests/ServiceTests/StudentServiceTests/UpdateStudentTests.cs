@@ -5,7 +5,6 @@ using IntroTask.Entities;
 using Moq;
 using Service;
 using Shared.Dtos.StudentDtos;
-using Shared.Dtos.TeacherDtos;
 
 namespace IntroTask.Tests.ServiceTests.StudentServiceTests;
 

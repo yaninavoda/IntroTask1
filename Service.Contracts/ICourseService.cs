@@ -6,7 +6,7 @@ public interface ICourseService
 {
     Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync(bool trackChanges);
     Task<CourseResponseDto> GetCourseByIdAsync(int id, bool trackChanges);
-    Task<CourseResponseDto> CreateCourseAsync(CourseCreateDto courseCreateDto);
+    Task<CourseShortResponseDto> CreateCourseAsync(CourseCreateDto courseCreateDto);
     Task DeleteCourseAsync(int id, bool trackChanges);
     Task UpdateCourseAsync(
         int id,

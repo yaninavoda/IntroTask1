@@ -54,6 +54,23 @@ public class GetAllStudentsTests
         Assert.That(studentDtos.Count, Is.EqualTo(GetStudents().Count()));
     }
 
+
+
+    [Test]
+    public async Task GetAllCoursesAsync_ShouldReturnEmptyList_IfNoCoursesFound()
+    {
+        // Arrange
+        SetupRepositoryMockReturnsEmptyCollection();
+
+        _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
+
+        // Act
+        var studentDtos = await _sut.GetAllStudentsAsync(trackChanges: false);
+
+        // Assert
+        Assert.That(studentDtos, Is.Empty);
+    }
+
     [TestCase(true)]
     [TestCase(false)]
     public async Task GetAllStudentsAsync_ShouldBeCalledOnce_IfStudentsExist(bool trackChanges)
@@ -86,35 +103,6 @@ public class GetAllStudentsTests
     //    // Assert
     //    Assert.That(studentDtos, Is.Empty);
     //}
-
-    private static StudentResponseDto GetStudentResponseDto()
-    {
-        return new(
-            1,
-            "Jane",
-            "Doe",
-            [
-                new(1, "Course 1")
-            ]);
-    }
-
-    private static Student GetStudent()
-    {
-        return new()
-        {
-            Id = 1,
-            FirstName = "Jane",
-            LastName = "Doe",
-            Courses = new List<Course>
-            {
-                new ()
-                {   Id = 1,
-                    Title = "Course 1",
-                    TeacherId = 1
-                }
-            }
-        };
-    }
 
     private static List<StudentShortResponseDto> GetStudentShortResponseDtos()
     {

@@ -67,7 +67,8 @@ public sealed class StudentService : IStudentService
     public async Task<IEnumerable<StudentShortResponseDto>> GetAllStudentsAsync(bool trackChanges)
     {
         var students = await _repository.Student.GetAllStudentsAsync(trackChanges);
-        var studentDtos = _mapper.Map<List<StudentShortResponseDto>>(students);
+        var studentDtos = _mapper.Map<List<StudentShortResponseDto>>(students)
+            ?? [];
 
         return studentDtos;
     }
