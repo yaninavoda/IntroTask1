@@ -88,21 +88,20 @@ public class GetAllStudentsTests
         _repositoryMock.Verify(repo => repo.Student.GetAllStudentsAsync(trackChanges), Times.Once);
     }
 
-    // TODO: fix test
-    //[Test]
-    //public async Task GetAllStudentsAsync_ShouldReturnEmptyList_IfNoStudentsFound()
-    //{
-    //    // Arrange
-    //    SetupRepositoryMockReturnsEmptyCollection();
+    [Test]
+    public async Task GetAllStudentsAsync_ShouldReturnEmptyList_IfNoStudentsFound()
+    {
+        // Arrange
+        SetupRepositoryMockReturnsEmptyCollection();
 
-    //    _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
+        _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
 
-    //    // Act
-    //    var studentDtos = await _sut.GetAllStudentsAsync(trackChanges: false);
+        // Act
+        var studentDtos = await _sut.GetAllStudentsAsync(trackChanges: false);
 
-    //    // Assert
-    //    Assert.That(studentDtos, Is.Empty);
-    //}
+        // Assert
+        Assert.That(studentDtos, Is.Empty);
+    }
 
     private static List<StudentShortResponseDto> GetStudentShortResponseDtos()
     {

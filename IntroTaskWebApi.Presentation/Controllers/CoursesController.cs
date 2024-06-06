@@ -95,7 +95,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         public async Task<IActionResult> UpdateCourse(int id, [FromBody] CourseUpdateDto course)
         {
             if (course is null)
-                return BadRequest($"{nameof(CourseCreateDto)} object is null");
+                return BadRequest($"{nameof(CourseUpdateDto)} object is null");
 
             if (!ModelState.IsValid)
                 return UnprocessableEntity(ModelState);
