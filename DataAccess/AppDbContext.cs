@@ -1,10 +1,12 @@
 ﻿using DataAccess.Configuration;
 using Microsoft.EntityFrameworkCore;
 using IntroTask.Entities;
+using Entities.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace DataAccess
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User>
     {
         public AppDbContext(DbContextOptions options) : base(options)
         {
