@@ -33,8 +33,7 @@ public sealed class TeacherService : ITeacherService
 
     public async Task DeleteTeacherAsync(int id, bool trackChanges)
     {
-        var teacher = await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
-            ?? throw new TeacherNotFoundException(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
         _repository.Teacher.DeleteTeacher(teacher);
         await _repository.SaveAsync();
@@ -52,8 +51,7 @@ public sealed class TeacherService : ITeacherService
 
     public async Task<TeacherResponseDto> GetTeacherByIdAsync(int id, bool trackChanges)
     {
-        var teacher = await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
-            ?? throw new TeacherNotFoundException(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
         var responseDto = _mapper.Map<TeacherResponseDto>(teacher);
 
@@ -62,15 +60,9 @@ public sealed class TeacherService : ITeacherService
 
     public async Task ResignTeacherFromCourse(int id, int courseId, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
     {
-        var teacher = await _repository.Teacher.GetTeacherByIdAsync(
-            id,
-            trackChanges)
-        ?? throw new TeacherNotFoundException(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
-        var course = await _repository.Course.GetCourseByIdAsync(
-            courseId,
-            trackChanges)
-        ?? throw new CourseNotFoundException(courseId);
+        var course = await GetCourseAndCheckIfExists(courseId, trackChanges);
 
         var isTeacherAppointedForCourse = course.TeacherId == id;
 
@@ -88,11 +80,22 @@ public sealed class TeacherService : ITeacherService
 
     public async Task UpdateTeacherAsync(int id, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
     {
-        var teacher = await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
-            ?? throw new TeacherNotFoundException(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
         _mapper.Map(teacherUpdateDto, teacher);
 
         await _repository.SaveAsync();
+    }
+
+    private async Task<Teacher> GetTeacherAndCheckIfExists(int id, bool trackChanges)
+    {
+        return await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
+            ?? throw new TeacherNotFoundException(id);
+    }
+
+    private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
+    {
+        return await _repository.Course.GetCourseByIdAsync(id, trackChanges)
+            ?? throw new CourseNotFoundException(id);
     }
 }

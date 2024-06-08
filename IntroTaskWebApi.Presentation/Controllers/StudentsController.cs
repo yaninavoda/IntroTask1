@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IntroTaskWebApi.Presentation.ActionFilters;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.Dtos.StudentDtos;
 
@@ -55,17 +56,12 @@ public class StudentsController : ControllerBase
     /// <param name="student">StudentCreateDto</param>
     /// <returns></returns>
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(422)]
     public async Task<IActionResult> CreateStudent([FromBody]StudentCreateDto student)
     {
-        if (student is null)
-            return BadRequest($"{nameof(StudentCreateDto)} object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         var createdStudent = await _service.StudentService.CreateStudentAsync(student);
 
         return CreatedAtRoute("StudentById", new { id = createdStudent.Id },
@@ -87,17 +83,12 @@ public class StudentsController : ControllerBase
     /// <param name="student">StudentUpdateDto</param>
     /// <returns></returns>
     [HttpPut("{id:int}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(422)]
     public async Task<IActionResult> UpdateStudent(int id, [FromBody]StudentUpdateDto student)
     {
-        if (student is null)
-            return BadRequest($"{nameof(StudentUpdateDto)} object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         await _service.StudentService.UpdateStudentAsync(id, student, trackChanges: true);
 
         return NoContent();
@@ -110,22 +101,16 @@ public class StudentsController : ControllerBase
     /// <param name="student">student dto</param>
     /// <returns></returns>
     [HttpPut("{id:int}/Courses/{courseId:int}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(422)]
     public async Task<IActionResult> EnrollStudentInCourse(int id, int courseId, [FromBody] StudentUpdateDto student)
     {
-        if (student is null)
-            return BadRequest($"{nameof(StudentUpdateDto)} object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         await _service.StudentService.EnrollStudentInCourseAsync(id, courseId, student, trackChanges: true);
 
         return NoContent();
     }
-
 
     /// <summary>
     /// Deletes the student with the provided id from the database.

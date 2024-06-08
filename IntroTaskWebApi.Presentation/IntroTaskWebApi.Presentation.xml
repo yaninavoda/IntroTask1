@@ -4,66 +4,6 @@
         <name>IntroTaskWebApi.Presentation</name>
     </assembly>
     <members>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.GetStudents">
-            <summary>
-            Gets the list of all students.
-            </summary>
-            <returns>A list of all students.</returns>
-        </member>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.GetStudent(System.Int32)">
-            <summary>
-            Gets the student with the provided id.
-            </summary>
-            <param name="id">the student's to retrieve id</param>
-            <returns>The student with the provided id from the database.</returns>
-        </member>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.CreateStudent(Shared.Dtos.StudentDtos.StudentCreateDto)">
-            <summary>
-            Creates a new student with the data from the request body.
-            </summary>
-            <remarks>
-            Sample request
-            POST api/students
-            {
-                "firstName": "Jane",
-                "lastName": "Doe"
-            }
-            </remarks>
-            <param name="student">StudentCreateDto</param>
-            <returns></returns>
-        </member>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.UpdateStudent(System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
-            <summary>
-            Updates the student with the provided id and data supplied in the request body.
-            </summary>
-            <remarks>
-            Sample request
-            PUT api/students/1
-            {
-                "firstName": "Jane",
-                "lastName": "Doe"
-            }
-            </remarks>
-            <param name="id">the student's to update id</param>
-            <param name="student">StudentUpdateDto</param>
-            <returns></returns>
-        </member>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.EnrollStudentInCourse(System.Int32,System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
-            <summary>
-            Enrolls the student in the course.
-            </summary>
-            <param name="id">The id of the student to be enrolled</param>
-            <param name="courseId">The id of the course to enroll the student in</param>
-            <param name="student">student dto</param>
-            <returns></returns>
-        </member>
-        <member name="M:IntroTask.Presentation.Controllers.StudentsController.DeleteStudent(System.Int32)">
-            <summary>
-            Deletes the student with the provided id from the database.
-            </summary>
-            <param name="id">the student's to delete id</param>
-            <returns></returns>
-        </member>
         <member name="M:IntroTaskWebApi.Presentation.Controllers.CoursesController.GetCourses">
             <summary>
             Gets the list of all courses.
@@ -187,6 +127,66 @@
             Deletes the teacher with the provided id from the database.
             </summary>
             <param name="id">The teacher's to delete id</param>
+            <returns></returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.GetStudents">
+            <summary>
+            Gets the list of all students.
+            </summary>
+            <returns>A list of all students.</returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.GetStudent(System.Int32)">
+            <summary>
+            Gets the student with the provided id.
+            </summary>
+            <param name="id">the student's to retrieve id</param>
+            <returns>The student with the provided id from the database.</returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.CreateStudent(Shared.Dtos.StudentDtos.StudentCreateDto)">
+            <summary>
+            Creates a new student with the data from the request body.
+            </summary>
+            <remarks>
+            Sample request
+            POST api/students
+            {
+                "firstName": "Jane",
+                "lastName": "Doe"
+            }
+            </remarks>
+            <param name="student">StudentCreateDto</param>
+            <returns></returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.UpdateStudent(System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
+            <summary>
+            Updates the student with the provided id and data supplied in the request body.
+            </summary>
+            <remarks>
+            Sample request
+            PUT api/students/1
+            {
+                "firstName": "Jane",
+                "lastName": "Doe"
+            }
+            </remarks>
+            <param name="id">the student's to update id</param>
+            <param name="student">StudentUpdateDto</param>
+            <returns></returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.EnrollStudentInCourse(System.Int32,System.Int32,Shared.Dtos.StudentDtos.StudentUpdateDto)">
+            <summary>
+            Enrolls the student in the course.
+            </summary>
+            <param name="id">The id of the student to be enrolled</param>
+            <param name="courseId">The id of the course to enroll the student in</param>
+            <param name="student">student dto</param>
+            <returns></returns>
+        </member>
+        <member name="M:IntroTask.Presentation.Controllers.StudentsController.DeleteStudent(System.Int32)">
+            <summary>
+            Deletes the student with the provided id from the database.
+            </summary>
+            <param name="id">the student's to delete id</param>
             <returns></returns>
         </member>
     </members>

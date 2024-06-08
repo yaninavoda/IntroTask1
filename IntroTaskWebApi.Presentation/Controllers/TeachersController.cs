@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IntroTaskWebApi.Presentation.ActionFilters;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.Dtos.TeacherDtos;
 
@@ -57,17 +58,12 @@ public class TeachersController : ControllerBase
     /// <param name="teacher">TeacherCreateDto</param>
     /// <returns></returns>
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(422)]
     public async Task<IActionResult> CreateTeacher([FromBody] TeacherCreateDto teacher)
     {
-        if (teacher is null)
-            return BadRequest($"{nameof(TeacherCreateDto)} object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         var createdTeacher = await _service.TeacherService.CreateTeacherAsync(teacher);
 
         return CreatedAtRoute("TeacherById", new { id = createdTeacher.Id },
@@ -88,17 +84,12 @@ public class TeachersController : ControllerBase
     /// <param name="teacher">TeacherUpdateDto</param>
     /// <returns></returns>
     [HttpPut("{id:int}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [ProducesResponseType(422)]
     public async Task<IActionResult> UpdateTeacher(int id, [FromBody] TeacherUpdateDto teacher)
     {
-        if (teacher is null)
-            return BadRequest($"{nameof(TeacherUpdateDto)} object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         await _service.TeacherService.UpdateTeacherAsync(id, teacher, trackChanges: true);
 
         return NoContent();
@@ -112,17 +103,12 @@ public class TeachersController : ControllerBase
     /// <param name="teacher">TeacherUpdateDto</param>
     /// <returns></returns>
     [HttpPut("{id:int}/Courses/{courseId:int}")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [ProducesResponseType(422)]
     public async Task<IActionResult> ResignTeacherFromCourse(int id, int courseId, [FromBody] TeacherUpdateDto teacher, bool v)
     {
-        if (teacher is null)
-            return BadRequest($"{nameof(TeacherUpdateDto)} object is null");
-
-        if (!ModelState.IsValid)
-            return UnprocessableEntity(ModelState);
-
         await _service.TeacherService.ResignTeacherFromCourse(id, courseId, teacher, trackChanges: true);
 
         return NoContent();

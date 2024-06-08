@@ -3,6 +3,7 @@ using IntroTaskWebApi;
 using IntroTask.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using IntroTaskWebApi.Presentation.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 LogManager.Setup().LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
@@ -20,10 +21,11 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
-
 builder.Services.AddAuthentication();
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureSwagger();
+builder.Services.AddScoped<ValidationFilterAttribute>();
+
 builder.Services.AddControllers()
     .AddApplicationPart(typeof(IntroTask.Presentation.AssemblyReference).Assembly);
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IntroTaskWebApi.Presentation.ActionFilters;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.Dtos.CourseDtos;
 
@@ -58,17 +59,12 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="course">CourseCreateDto</param>
         /// <returns></returns>
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(422)]
         public async Task<IActionResult> CreateCourse([FromBody] CourseCreateDto course)
         {
-            if (course is null)
-                return BadRequest($"{nameof(CourseCreateDto)} object is null");
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
             var createdCourse = await _service.CourseService.CreateCourseAsync(course);
 
             return CreatedAtRoute("CourseById", new { id = createdCourse.Id },
@@ -89,17 +85,12 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="course">CourseUpdateDto</param>
         /// <returns></returns>
         [HttpPut("{id:int}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> UpdateCourse(int id, [FromBody] CourseUpdateDto course)
         {
-            if (course is null)
-                return BadRequest($"{nameof(CourseUpdateDto)} object is null");
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
             await _service.CourseService.UpdateCourseAsync(id, course, trackChanges: true);
 
             return NoContent();
@@ -112,17 +103,12 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="course">CourseUpdateDto</param>
         /// <returns></returns>
         [HttpPut("{id:int}/Teachers/{teacherId:int}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> AppointTeacherForCourse(
             int id,
             int teacherId,
             [FromBody] CourseUpdateDto course)
         {
-            if (course is null)
-                return BadRequest($"{nameof(CourseUpdateDto)} object is null");
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
             await _service.CourseService.AppointTeacherForCourse(id, teacherId, course, trackChanges: true);
 
             return NoContent();
@@ -136,14 +122,9 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// <param name="course">CourseUpdateDto</param>
         /// <returns></returns>
         [HttpPut("{id:int}/Students/{studentId:int}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ExcludeStudentFromCourse(int id, int studentId, [FromBody] CourseUpdateDto course)
         {
-            if (course is null)
-                return BadRequest($"{nameof(CourseUpdateDto)} object is null");
-
-            if (!ModelState.IsValid)
-                return UnprocessableEntity(ModelState);
-
             await _service.CourseService.ExcludeStudentFromCourse(id, studentId, course, trackChanges: true);
 
             return NoContent();
