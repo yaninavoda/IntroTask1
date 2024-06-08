@@ -1,4 +1,5 @@
 ﻿using IntroTaskWebApi.Presentation.ActionFilters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.Dtos.CourseDtos;
@@ -23,6 +24,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// </summary>
         /// <returns>A list of all courses.</returns>
         [HttpGet]
+        [Authorize(Roles = "Manager")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetCourses()
         {

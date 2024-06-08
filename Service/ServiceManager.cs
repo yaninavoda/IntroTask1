@@ -14,7 +14,11 @@ public sealed class ServiceManager : IServiceManager
     private readonly Lazy<IStudentService> _studentService;
     private readonly Lazy<IAuthenticationService> _authenticationService;
 
-    public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper, UserManager<User> userManager,
+    public ServiceManager(
+        IRepositoryManager repositoryManager,
+        IMapper mapper,
+        ILoggerManager loggerManager,
+        UserManager<User> userManager,
         IConfiguration configuration)
     {
         _courseService = new Lazy<ICourseService>(() => new CourseService(repositoryManager, mapper));
@@ -23,6 +27,7 @@ public sealed class ServiceManager : IServiceManager
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(
             repositoryManager,
             mapper,
+            loggerManager,
             userManager,
             configuration));
     }
