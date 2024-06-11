@@ -41,7 +41,7 @@ public sealed class StudentService : IStudentService
     public async Task EnrollStudentInCourseAsync(int studentId, int courseId, StudentUpdateDto studentUpdateDto, bool trackChanges)
     {
         var student = await GetStudentAndCheckIfExists(studentId, trackChanges);
-        var course = await GetCourseAndCheckIfExists(courseId, trackChanges);
+        var course = await GetCourseAndCheckIfExists(courseId);
 
         var isAlreadyEnrolled = student.Courses.Contains(course);
 
@@ -92,9 +92,9 @@ public sealed class StudentService : IStudentService
             ?? throw new StudentNotFoundException(studentId);
     }
 
-    private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
+    private async Task<Course> GetCourseAndCheckIfExists(int id)
     {
-        return await _repository.Course.GetCourseByIdAsync(id, trackChanges)
+        return await _repository.Course.GetSingleOrDefaultAsync(predicate: c => c.Id == id)
             ?? throw new CourseNotFoundException(id);
     }
 }

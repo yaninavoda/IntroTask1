@@ -10,7 +10,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    [Authorize]
+    //[Authorize]
     public class CoursesController : ControllerBase
     {
         private readonly IServiceManager _service;
@@ -25,7 +25,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         /// </summary>
         /// <returns>A list of all courses.</returns>
         [HttpGet]
-        [Authorize(Roles = "Manager, Admin")]
+        //[Authorize(Roles = "Manager, Admin")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetCourses()
         {

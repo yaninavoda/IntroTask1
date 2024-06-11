@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 using Shared.Dtos.TeacherDtos;
 
@@ -62,7 +63,7 @@ public sealed class TeacherService : ITeacherService
     {
         var teacher = await GetTeacherAndCheckIfExists(id);
 
-        var course = await GetCourseAndCheckIfExists(courseId, trackChanges);
+        var course = await GetCourseAndCheckIfExists(courseId);
 
         var isTeacherAppointedForCourse = course.TeacherId == id;
 
@@ -89,16 +90,23 @@ public sealed class TeacherService : ITeacherService
         await _repositoryManager.SaveAsync();
     }
 
+    private async Task<Course> GetCourseAndCheckIfExists(int id)
+    {
+        return await _repositoryManager.Course.GetSingleOrDefaultAsync(
+            predicate: c => c.Id == id,
+            include: c => c
+                .Include(c => c.Teacher)
+                .Include(c => c.Students))
+
+            ?? throw new CourseNotFoundException(id);
+    }
+
     private async Task<Teacher> GetTeacherAndCheckIfExists(int id)
     {
         return await _repositoryManager.Teacher.GetSingleOrDefaultAsync(
-            predicate: t => t.Id == id)
-            ?? throw new TeacherNotFoundException(id);
-    }
+            predicate: t => t.Id == id,
+            include: t => t.Include(t => t.Courses))
 
-    private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
-    {
-        return await _repositoryManager.Course.GetCourseByIdAsync(id, trackChanges)
-            ?? throw new CourseNotFoundException(id);
+            ?? throw new TeacherNotFoundException(id);
     }
 }

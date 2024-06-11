@@ -1,6 +1,5 @@
 ﻿using Contracts;
 using IntroTask.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories;
 

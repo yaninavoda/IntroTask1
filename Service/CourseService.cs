@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 using Shared.Dtos.CourseDtos;
 
@@ -23,7 +24,7 @@ public sealed class CourseService : ICourseService
     {
         var course = _mapper.Map<Course>(courseCreateDto);
 
-        _repositoryManager.Course.CreateCourse(course);
+        _repositoryManager.Course.Create(course);
 
         await _repositoryManager.SaveAsync();
 
@@ -34,16 +35,16 @@ public sealed class CourseService : ICourseService
 
     public async Task DeleteCourseAsync(int id, bool trackChanges)
     {
-        var course = await GetCourseAndCheckIfExists(id, trackChanges);
+        var course = await GetCourseAndCheckIfExists(id);
 
-        _repositoryManager.Course.DeleteCourse(course);
+        _repositoryManager.Course.Delete(course);
 
         await _repositoryManager.SaveAsync();
     }
 
     public async Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync(bool trackChanges)
     {
-        var courses = await _repositoryManager.Course.GetAllCoursesAsync(trackChanges);
+        var courses = await _repositoryManager.Course.GetAllAsync();
 
         var responseDtos = _mapper.Map<List<CourseShortResponseDto>>(courses)
             ?? [];
@@ -53,7 +54,7 @@ public sealed class CourseService : ICourseService
 
     public async Task<CourseResponseDto> GetCourseByIdAsync(int id, bool trackChanges)
     {
-        var course = await GetCourseAndCheckIfExists(id, trackChanges);
+        var course = await GetCourseAndCheckIfExists(id);
 
         var responseDto = _mapper.Map<CourseResponseDto>(course);
 
@@ -62,9 +63,11 @@ public sealed class CourseService : ICourseService
 
     public async Task UpdateCourseAsync(int id, CourseUpdateDto courseUpdateDto, bool trackChanges)
     {
-        var course = await GetCourseAndCheckIfExists(id, trackChanges);
+        var course = await GetCourseAndCheckIfExists(id);
 
         _mapper.Map(courseUpdateDto, course);
+
+        _repositoryManager.Course.Update(course);
 
         await _repositoryManager.SaveAsync();
     }
@@ -77,7 +80,7 @@ public sealed class CourseService : ICourseService
     {
         var teacher = await GetTeacherAndCheckIfExists(teacherId);
 
-        var course = await GetCourseAndCheckIfExists(id, trackChanges);
+        var course = await GetCourseAndCheckIfExists(id);
 
         teacher.Courses!.Add(course);
 
@@ -85,7 +88,7 @@ public sealed class CourseService : ICourseService
 
         course.TeacherId = teacherId;
         course.Teacher = teacher;
-
+        _repositoryManager.Course.Update(course);
         await _repositoryManager.SaveAsync();
     }
 
@@ -93,7 +96,7 @@ public sealed class CourseService : ICourseService
     {
         var student = await GetStudentAndCheckIfExists(studentId, trackChanges);
 
-        var course = await GetCourseAndCheckIfExists(id, trackChanges);
+        var course = await GetCourseAndCheckIfExists(id);
 
         var isEnrolled = student.Courses.Contains(course);
 
@@ -113,7 +116,9 @@ public sealed class CourseService : ICourseService
     private async Task<Teacher> GetTeacherAndCheckIfExists(int id)
     {
         return await _repositoryManager.Teacher.GetSingleOrDefaultAsync(
-            predicate: t => t.Id == id)
+            predicate: t => t.Id == id,
+            include: t => t.Include(t => t.Courses))
+
             ?? throw new TeacherNotFoundException(id);
     }
 
@@ -123,9 +128,14 @@ public sealed class CourseService : ICourseService
             ?? throw new StudentNotFoundException(studentId);
     }
 
-    private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
+    private async Task<Course> GetCourseAndCheckIfExists(int id)
     {
-        return await _repositoryManager.Course.GetCourseByIdAsync(id, trackChanges)
+        return await _repositoryManager.Course.GetSingleOrDefaultAsync(
+            predicate: c => c.Id == id,
+            include: c => c
+                .Include(c => c.Teacher)
+                .Include(c => c.Students))
+
             ?? throw new CourseNotFoundException(id);
     }
 }
