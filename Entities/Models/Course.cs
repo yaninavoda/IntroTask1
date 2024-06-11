@@ -17,5 +17,15 @@ namespace IntroTask.Entities
         public int? TeacherId { get; set; }
         public Teacher? Teacher { get; set; }
         public ICollection<Student> Students { get; set; } = new List<Student>();
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Course other && Id == other.Id && Title == other.Title;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Title);
+        }
     }
 }

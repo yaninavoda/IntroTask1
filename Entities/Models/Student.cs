@@ -20,5 +20,18 @@ namespace IntroTask.Entities
         [MaxLength(60, ErrorMessage = "Maximum length for the {0} is 60 characters.")]
         public string LastName { get; set; } = string.Empty;
         public ICollection<Course> Courses { get; set; } = new List<Course>();
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Student other
+                && Id == other.Id
+                && FirstName == other.FirstName
+                && LastName == other.LastName;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, FirstName, LastName);
+        }
     }
 }
