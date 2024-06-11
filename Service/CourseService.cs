@@ -9,13 +9,13 @@ namespace Service;
 
 public sealed class CourseService : ICourseService
 {
-    private readonly IRepositoryManager _repository;
+    private readonly IRepositoryManager _repositoryManager;
     private readonly IMapper _mapper;
 
 
     public CourseService(IRepositoryManager repository, IMapper mapper)
     {
-        _repository = repository;
+        _repositoryManager = repository;
         _mapper = mapper;
     }
 
@@ -23,9 +23,9 @@ public sealed class CourseService : ICourseService
     {
         var course = _mapper.Map<Course>(courseCreateDto);
 
-        _repository.Course.CreateCourse(course);
+        _repositoryManager.Course.CreateCourse(course);
 
-        await _repository.SaveAsync();
+        await _repositoryManager.SaveAsync();
 
         var responseDto = _mapper.Map<CourseShortResponseDto>(course);
 
@@ -36,14 +36,14 @@ public sealed class CourseService : ICourseService
     {
         var course = await GetCourseAndCheckIfExists(id, trackChanges);
 
-        _repository.Course.DeleteCourse(course);
+        _repositoryManager.Course.DeleteCourse(course);
 
-        await _repository.SaveAsync();
+        await _repositoryManager.SaveAsync();
     }
 
     public async Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync(bool trackChanges)
     {
-        var courses = await _repository.Course.GetAllCoursesAsync(trackChanges);
+        var courses = await _repositoryManager.Course.GetAllCoursesAsync(trackChanges);
 
         var responseDtos = _mapper.Map<List<CourseShortResponseDto>>(courses)
             ?? [];
@@ -66,7 +66,7 @@ public sealed class CourseService : ICourseService
 
         _mapper.Map(courseUpdateDto, course);
 
-        await _repository.SaveAsync();
+        await _repositoryManager.SaveAsync();
     }
 
     public async Task AppointTeacherForCourse(
@@ -75,7 +75,7 @@ public sealed class CourseService : ICourseService
         CourseUpdateDto courseDto,
         bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(teacherId, trackChanges);
+        var teacher = await GetTeacherAndCheckIfExists(teacherId);
 
         var course = await GetCourseAndCheckIfExists(id, trackChanges);
 
@@ -86,7 +86,7 @@ public sealed class CourseService : ICourseService
         course.TeacherId = teacherId;
         course.Teacher = teacher;
 
-        await _repository.SaveAsync();
+        await _repositoryManager.SaveAsync();
     }
 
     public async Task ExcludeStudentFromCourse(int id, int studentId, CourseUpdateDto courseDto, bool trackChanges)
@@ -107,26 +107,25 @@ public sealed class CourseService : ICourseService
 
         _mapper.Map(courseDto, course);
 
-        await _repository.SaveAsync();
+        await _repositoryManager.SaveAsync();
     }
 
-    private async Task<Teacher> GetTeacherAndCheckIfExists(int teacherId, bool trackChanges)
+    private async Task<Teacher> GetTeacherAndCheckIfExists(int id)
     {
-        return await _repository.Teacher.GetTeacherByIdAsync(
-            teacherId,
-            trackChanges)
-        ?? throw new TeacherNotFoundException(teacherId);
+        return await _repositoryManager.Teacher.GetSingleOrDefaultAsync(
+            predicate: t => t.Id == id)
+            ?? throw new TeacherNotFoundException(id);
     }
 
     private async Task<Student> GetStudentAndCheckIfExists(int studentId, bool trackChanges)
     {
-        return await _repository.Student.GetStudentByIdAsync(studentId, trackChanges)
+        return await _repositoryManager.Student.GetStudentByIdAsync(studentId, trackChanges)
             ?? throw new StudentNotFoundException(studentId);
     }
 
     private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
     {
-        return await _repository.Course.GetCourseByIdAsync(id, trackChanges)
+        return await _repositoryManager.Course.GetCourseByIdAsync(id, trackChanges)
             ?? throw new CourseNotFoundException(id);
     }
 }

@@ -9,13 +9,13 @@ namespace Service;
 
 public sealed class TeacherService : ITeacherService
 {
-    private readonly IRepositoryManager _repository;
+    private readonly IRepositoryManager _repositoryManager;
     private readonly IMapper _mapper;
 
 
     public TeacherService(IRepositoryManager repository, IMapper mapper)
     {
-        _repository = repository;
+        _repositoryManager = repository;
         _mapper = mapper;
     }
 
@@ -23,8 +23,8 @@ public sealed class TeacherService : ITeacherService
     {
         var teacher = _mapper.Map<Teacher>(teacherCreateDto);
 
-        _repository.Teacher.CreateTeacher(teacher);
-        await _repository.SaveAsync();
+        _repositoryManager.Teacher.Create(teacher);
+        await _repositoryManager.SaveAsync();
 
         var responseDto = _mapper.Map<TeacherShortResponseDto>(teacher);
 
@@ -33,15 +33,15 @@ public sealed class TeacherService : ITeacherService
 
     public async Task DeleteTeacherAsync(int id, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
+        var teacher = await GetTeacherAndCheckIfExists(id);
 
-        _repository.Teacher.DeleteTeacher(teacher);
-        await _repository.SaveAsync();
+        _repositoryManager.Teacher.Delete(teacher);
+        await _repositoryManager.SaveAsync();
     }
 
     public async Task<IEnumerable<TeacherShortResponseDto>> GetAllTeachersAsync(bool trackChanges)
     {
-        var teachers = await _repository.Teacher.GetAllTeachersAsync(trackChanges);
+        var teachers = await _repositoryManager.Teacher.GetAllAsync();
 
         var responseDtos = _mapper.Map<List<TeacherShortResponseDto>>(teachers)
             ?? [];
@@ -51,7 +51,7 @@ public sealed class TeacherService : ITeacherService
 
     public async Task<TeacherResponseDto> GetTeacherByIdAsync(int id, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
+        var teacher = await GetTeacherAndCheckIfExists(id);
 
         var responseDto = _mapper.Map<TeacherResponseDto>(teacher);
 
@@ -60,7 +60,7 @@ public sealed class TeacherService : ITeacherService
 
     public async Task ResignTeacherFromCourse(int id, int courseId, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
+        var teacher = await GetTeacherAndCheckIfExists(id);
 
         var course = await GetCourseAndCheckIfExists(courseId, trackChanges);
 
@@ -75,27 +75,30 @@ public sealed class TeacherService : ITeacherService
 
         _mapper.Map(teacherUpdateDto, teacher);
 
-        await _repository.SaveAsync();
+        await _repositoryManager.SaveAsync();
     }
 
     public async Task UpdateTeacherAsync(int id, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
+        var teacher = await GetTeacherAndCheckIfExists(id);
 
         _mapper.Map(teacherUpdateDto, teacher);
 
-        await _repository.SaveAsync();
+        _repositoryManager.Teacher.Update(teacher);
+
+        await _repositoryManager.SaveAsync();
     }
 
-    private async Task<Teacher> GetTeacherAndCheckIfExists(int id, bool trackChanges)
+    private async Task<Teacher> GetTeacherAndCheckIfExists(int id)
     {
-        return await _repository.Teacher.GetTeacherByIdAsync(id, trackChanges)
+        return await _repositoryManager.Teacher.GetSingleOrDefaultAsync(
+            predicate: t => t.Id == id)
             ?? throw new TeacherNotFoundException(id);
     }
 
     private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
     {
-        return await _repository.Course.GetCourseByIdAsync(id, trackChanges)
+        return await _repositoryManager.Course.GetCourseByIdAsync(id, trackChanges)
             ?? throw new CourseNotFoundException(id);
     }
 }
