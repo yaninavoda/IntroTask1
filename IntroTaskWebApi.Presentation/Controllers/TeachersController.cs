@@ -25,7 +25,7 @@ public class TeachersController : ControllerBase
     [ProducesResponseType(200)]
     public async Task<IActionResult> GetTeachers()
     {
-        var teachers = await _service.TeacherService.GetAllTeachersAsync(trackChanges: false);
+        var teachers = await _service.TeacherService.GetAllTeachersAsync();
 
         return Ok(teachers);
     }
@@ -40,7 +40,7 @@ public class TeachersController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetTeacher(int id)
     {
-        var teacher = await _service.TeacherService.GetTeacherByIdAsync(id, trackChanges: false);
+        var teacher = await _service.TeacherService.GetTeacherByIdAsync(id, false);
 
         return Ok(teacher);
     }
@@ -90,7 +90,7 @@ public class TeachersController : ControllerBase
     [ProducesResponseType(422)]
     public async Task<IActionResult> UpdateTeacher(int id, [FromBody] TeacherUpdateDto teacher)
     {
-        await _service.TeacherService.UpdateTeacherAsync(id, teacher, trackChanges: true);
+        await _service.TeacherService.UpdateTeacherAsync(id, teacher, true);
 
         return NoContent();
     }
@@ -107,9 +107,9 @@ public class TeachersController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
     [ProducesResponseType(422)]
-    public async Task<IActionResult> ResignTeacherFromCourse(int id, int courseId, [FromBody] TeacherUpdateDto teacher, bool v)
+    public async Task<IActionResult> ResignTeacherFromCourse(int id, int courseId, [FromBody] TeacherUpdateDto teacher)
     {
-        await _service.TeacherService.ResignTeacherFromCourse(id, courseId, teacher, trackChanges: true);
+        await _service.TeacherService.ResignTeacherFromCourse(id, courseId, teacher, true);
 
         return NoContent();
     }
@@ -124,7 +124,7 @@ public class TeachersController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteTeacher(int id)
     {
-        await _service.TeacherService.DeleteTeacherAsync(id, trackChanges: false);
+        await _service.TeacherService.DeleteTeacherAsync(id, false);
 
         return NoContent();
     }

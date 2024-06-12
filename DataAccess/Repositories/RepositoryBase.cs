@@ -12,12 +12,6 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     public RepositoryBase(AppDbContext context)
         => _context = context;
 
-    public IQueryable<T> FindAll(bool trackChanges)
-    {
-        return !trackChanges ?
-          _context.Set<T>().AsNoTracking() :
-          _context.Set<T>();
-    }
 
     public async Task<IEnumerable<T>?> GetAllAsync(
         Expression<Func<T, bool>>? predicate = null,
@@ -26,17 +20,12 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
         return await GetQueryable(predicate, include).ToListAsync();
     }
 
-    public async Task<T?> GetSingleOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
+    public async Task<T?> GetSingleOrDefaultAsync(
+        Expression<Func<T, bool>>? predicate = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        bool trackChanges = false)
     {
-        return await GetQueryable(predicate, include).SingleOrDefaultAsync();
-    }
-
-    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> predicate,
-    bool trackChanges)
-    {
-        return !trackChanges ?
-          _context.Set<T>().Where(predicate).AsNoTracking() :
-          _context.Set<T>().Where(predicate);
+        return await GetQueryable(predicate, include, trackChanges).SingleOrDefaultAsync();
     }
 
     public void Create(T entity) => _context.Set<T>().Add(entity);
@@ -47,19 +36,22 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 
     private IQueryable<T> GetQueryable(
         Expression<Func<T, bool>>? predicate = default,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default)
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default, bool trackChanges = false)
     {
-        var query = _context.Set<T>().AsNoTracking();
+        var query = _context.Set<T>().AsQueryable();
 
         if (predicate is not null)
         {
             query = query.Where(predicate);
         }
+
         if (include is not null)
         {
             query = include(query);
         }
 
-        return query.AsNoTracking();
+        return trackChanges ?
+            query :
+            query.AsNoTracking();
     }
 }

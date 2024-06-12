@@ -2,10 +2,6 @@
 
 namespace Contracts;
 
-public interface IStudentRepository
+public interface IStudentRepository : IRepositoryBase<Student>
 {
-    Task<IEnumerable<Student>> GetAllStudentsAsync(bool trackChanges);
-    Task<Student>? GetStudentByIdAsync(int id, bool trackChanges);
-    void CreateStudent(Student student);
-    void DeleteStudent(Student student);
 }

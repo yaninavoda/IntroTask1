@@ -34,13 +34,13 @@ public sealed class TeacherService : ITeacherService
 
     public async Task DeleteTeacherAsync(int id, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
         _repositoryManager.Teacher.Delete(teacher);
         await _repositoryManager.SaveAsync();
     }
 
-    public async Task<IEnumerable<TeacherShortResponseDto>> GetAllTeachersAsync(bool trackChanges)
+    public async Task<IEnumerable<TeacherShortResponseDto>> GetAllTeachersAsync()
     {
         var teachers = await _repositoryManager.Teacher.GetAllAsync();
 
@@ -52,7 +52,7 @@ public sealed class TeacherService : ITeacherService
 
     public async Task<TeacherResponseDto> GetTeacherByIdAsync(int id, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
         var responseDto = _mapper.Map<TeacherResponseDto>(teacher);
 
@@ -61,9 +61,9 @@ public sealed class TeacherService : ITeacherService
 
     public async Task ResignTeacherFromCourse(int id, int courseId, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
-        var course = await GetCourseAndCheckIfExists(courseId);
+        var course = await GetCourseAndCheckIfExists(courseId, trackChanges);
 
         var isTeacherAppointedForCourse = course.TeacherId == id;
 
@@ -81,31 +81,31 @@ public sealed class TeacherService : ITeacherService
 
     public async Task UpdateTeacherAsync(int id, TeacherUpdateDto teacherUpdateDto, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(id);
+        var teacher = await GetTeacherAndCheckIfExists(id, trackChanges);
 
         _mapper.Map(teacherUpdateDto, teacher);
-
-        _repositoryManager.Teacher.Update(teacher);
 
         await _repositoryManager.SaveAsync();
     }
 
-    private async Task<Course> GetCourseAndCheckIfExists(int id)
+    private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
     {
         return await _repositoryManager.Course.GetSingleOrDefaultAsync(
             predicate: c => c.Id == id,
             include: c => c
                 .Include(c => c.Teacher)
-                .Include(c => c.Students))
+                .Include(c => c.Students),
+            trackChanges)
 
             ?? throw new CourseNotFoundException(id);
     }
 
-    private async Task<Teacher> GetTeacherAndCheckIfExists(int id)
+    private async Task<Teacher> GetTeacherAndCheckIfExists(int id, bool trackChanges)
     {
         return await _repositoryManager.Teacher.GetSingleOrDefaultAsync(
             predicate: t => t.Id == id,
-            include: t => t.Include(t => t.Courses))
+            include: t => t.Include(t => t.Courses),
+            trackChanges)
 
             ?? throw new TeacherNotFoundException(id);
     }

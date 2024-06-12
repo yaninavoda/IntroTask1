@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 using Shared.Dtos.StudentDtos;
 
@@ -9,12 +10,12 @@ namespace Service;
 
 public sealed class StudentService : IStudentService
 {
-    private readonly IRepositoryManager _repository;
+    private readonly IRepositoryManager _repositoryManager;
     private readonly IMapper _mapper;
 
     public StudentService(IRepositoryManager repository, IMapper mapper)
     {
-        _repository = repository;
+        _repositoryManager = repository;
         _mapper = mapper;
     }
 
@@ -22,8 +23,8 @@ public sealed class StudentService : IStudentService
     {
         var student = _mapper.Map<Student>(studentCreateDto);
 
-        _repository.Student.CreateStudent(student);
-        await _repository.SaveAsync();
+        _repositoryManager.Student.Create(student);
+        await _repositoryManager.SaveAsync();
 
         var responseDto = _mapper.Map<StudentShortResponseDto>(student);
 
@@ -34,14 +35,15 @@ public sealed class StudentService : IStudentService
     {
         var student = await GetStudentAndCheckIfExists(id, trackChanges);
 
-        _repository.Student.DeleteStudent(student);
-        await _repository.SaveAsync();
+        _repositoryManager.Student.Delete(student);
+
+        await _repositoryManager.SaveAsync();
     }
 
     public async Task EnrollStudentInCourseAsync(int studentId, int courseId, StudentUpdateDto studentUpdateDto, bool trackChanges)
     {
         var student = await GetStudentAndCheckIfExists(studentId, trackChanges);
-        var course = await GetCourseAndCheckIfExists(courseId);
+        var course = await GetCourseAndCheckIfExists(courseId, trackChanges);
 
         var isAlreadyEnrolled = student.Courses.Contains(course);
 
@@ -57,12 +59,12 @@ public sealed class StudentService : IStudentService
 
         _mapper.Map(studentUpdateDto, student);
 
-        await _repository.SaveAsync();
+        await _repositoryManager.SaveAsync();
     }
 
-    public async Task<IEnumerable<StudentShortResponseDto>> GetAllStudentsAsync(bool trackChanges)
+    public async Task<IEnumerable<StudentShortResponseDto>> GetAllStudentsAsync()
     {
-        var students = await _repository.Student.GetAllStudentsAsync(trackChanges);
+        var students = await _repositoryManager.Student.GetAllAsync();
         var studentDtos = _mapper.Map<List<StudentShortResponseDto>>(students)
             ?? [];
 
@@ -83,18 +85,29 @@ public sealed class StudentService : IStudentService
         var student = await GetStudentAndCheckIfExists(id, trackChanges);
 
         _mapper.Map(studentUpdateDto, student);
-        await _repository.SaveAsync();
+
+        await _repositoryManager.SaveAsync();
     }
 
     private async Task<Student> GetStudentAndCheckIfExists(int studentId, bool trackChanges)
     {
-        return await _repository.Student.GetStudentByIdAsync(studentId, trackChanges)
+        return await _repositoryManager.Student.GetSingleOrDefaultAsync(
+            predicate: s => s.Id == studentId,
+            include: s => s.Include(s => s.Courses),
+            trackChanges)
+
             ?? throw new StudentNotFoundException(studentId);
     }
 
-    private async Task<Course> GetCourseAndCheckIfExists(int id)
+    private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
     {
-        return await _repository.Course.GetSingleOrDefaultAsync(predicate: c => c.Id == id)
+        return await _repositoryManager.Course.GetSingleOrDefaultAsync(
+            predicate: c => c.Id == id,
+            include: c => c
+                .Include(c => c.Teacher)
+                .Include(c => c.Students),
+            trackChanges)
+
             ?? throw new CourseNotFoundException(id);
     }
 }

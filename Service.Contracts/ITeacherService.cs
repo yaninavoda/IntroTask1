@@ -4,7 +4,7 @@ namespace Service.Contracts;
 
 public interface ITeacherService
 {
-    Task<IEnumerable<TeacherShortResponseDto>> GetAllTeachersAsync(bool trackChanges);
+    Task<IEnumerable<TeacherShortResponseDto>> GetAllTeachersAsync();
     Task<TeacherResponseDto> GetTeacherByIdAsync(int id, bool trackChanges);
     Task<TeacherShortResponseDto> CreateTeacherAsync(TeacherCreateDto teacherCreateDto);
     Task DeleteTeacherAsync(int id, bool trackChanges);

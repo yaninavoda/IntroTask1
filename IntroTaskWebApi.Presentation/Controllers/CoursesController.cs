@@ -29,7 +29,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetCourses()
         {
-            var courses = await _service.CourseService.GetAllCoursesAsync(trackChanges: false);
+            var courses = await _service.CourseService.GetAllCoursesAsync();
 
             return Ok(courses);
         }
@@ -44,7 +44,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetCourse(int id)
         {
-            var course = await _service.CourseService.GetCourseByIdAsync(id, trackChanges: false);
+            var course = await _service.CourseService.GetCourseByIdAsync(id, false);
 
             return Ok(course);
         }
@@ -94,7 +94,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         [ProducesResponseType(400)]
         public async Task<IActionResult> UpdateCourse(int id, [FromBody] CourseUpdateDto course)
         {
-            await _service.CourseService.UpdateCourseAsync(id, course, trackChanges: true);
+            await _service.CourseService.UpdateCourseAsync(id, course, true);
 
             return NoContent();
         }
@@ -112,7 +112,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
             int teacherId,
             [FromBody] CourseUpdateDto course)
         {
-            await _service.CourseService.AppointTeacherForCourse(id, teacherId, course, trackChanges: true);
+            await _service.CourseService.AppointTeacherForCourse(id, teacherId, course, true);
 
             return NoContent();
         }
@@ -128,7 +128,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> ExcludeStudentFromCourse(int id, int studentId, [FromBody] CourseUpdateDto course)
         {
-            await _service.CourseService.ExcludeStudentFromCourse(id, studentId, course, trackChanges: true);
+            await _service.CourseService.ExcludeStudentFromCourse(id, studentId, course, true);
 
             return NoContent();
         }
@@ -143,7 +143,7 @@ namespace IntroTaskWebApi.Presentation.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteCourse(int id)
         {
-            await _service.CourseService.DeleteCourseAsync(id, trackChanges: false);
+            await _service.CourseService.DeleteCourseAsync(id, false);
 
             return NoContent();
         }

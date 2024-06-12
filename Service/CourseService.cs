@@ -35,14 +35,14 @@ public sealed class CourseService : ICourseService
 
     public async Task DeleteCourseAsync(int id, bool trackChanges)
     {
-        var course = await GetCourseAndCheckIfExists(id);
+        var course = await GetCourseAndCheckIfExists(id, trackChanges);
 
         _repositoryManager.Course.Delete(course);
 
         await _repositoryManager.SaveAsync();
     }
 
-    public async Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync(bool trackChanges)
+    public async Task<IEnumerable<CourseShortResponseDto>> GetAllCoursesAsync()
     {
         var courses = await _repositoryManager.Course.GetAllAsync();
 
@@ -54,33 +54,27 @@ public sealed class CourseService : ICourseService
 
     public async Task<CourseResponseDto> GetCourseByIdAsync(int id, bool trackChanges)
     {
-        var course = await GetCourseAndCheckIfExists(id);
+        var course = await GetCourseAndCheckIfExists(id, trackChanges);
 
         var responseDto = _mapper.Map<CourseResponseDto>(course);
 
         return responseDto;
     }
 
-    public async Task UpdateCourseAsync(int id, CourseUpdateDto courseUpdateDto, bool trackChanges)
+    public async Task UpdateCourseAsync(int id, CourseUpdateDto courseUpdateDto, bool trackChages)
     {
-        var course = await GetCourseAndCheckIfExists(id);
+        var course = await GetCourseAndCheckIfExists(id, trackChages);
 
         _mapper.Map(courseUpdateDto, course);
-
-        _repositoryManager.Course.Update(course);
 
         await _repositoryManager.SaveAsync();
     }
 
-    public async Task AppointTeacherForCourse(
-        int id,
-        int teacherId,
-        CourseUpdateDto courseDto,
-        bool trackChanges)
+    public async Task AppointTeacherForCourse(int id, int teacherId, CourseUpdateDto courseDto, bool trackChanges)
     {
-        var teacher = await GetTeacherAndCheckIfExists(teacherId);
+        var teacher = await GetTeacherAndCheckIfExists(teacherId, trackChanges);
 
-        var course = await GetCourseAndCheckIfExists(id);
+        var course = await GetCourseAndCheckIfExists(id, trackChanges);
 
         teacher.Courses!.Add(course);
 
@@ -88,7 +82,7 @@ public sealed class CourseService : ICourseService
 
         course.TeacherId = teacherId;
         course.Teacher = teacher;
-        _repositoryManager.Course.Update(course);
+
         await _repositoryManager.SaveAsync();
     }
 
@@ -96,9 +90,9 @@ public sealed class CourseService : ICourseService
     {
         var student = await GetStudentAndCheckIfExists(studentId, trackChanges);
 
-        var course = await GetCourseAndCheckIfExists(id);
+        var course = await GetCourseAndCheckIfExists(id, trackChanges);
 
-        var isEnrolled = student.Courses.Contains(course);
+        var isEnrolled = course.Students.Contains(student);
 
         if (!isEnrolled)
         {
@@ -113,28 +107,34 @@ public sealed class CourseService : ICourseService
         await _repositoryManager.SaveAsync();
     }
 
-    private async Task<Teacher> GetTeacherAndCheckIfExists(int id)
+    private async Task<Teacher> GetTeacherAndCheckIfExists(int id, bool trackChanges)
     {
         return await _repositoryManager.Teacher.GetSingleOrDefaultAsync(
             predicate: t => t.Id == id,
-            include: t => t.Include(t => t.Courses))
+            include: t => t.Include(t => t.Courses),
+            trackChanges)
 
             ?? throw new TeacherNotFoundException(id);
     }
 
     private async Task<Student> GetStudentAndCheckIfExists(int studentId, bool trackChanges)
     {
-        return await _repositoryManager.Student.GetStudentByIdAsync(studentId, trackChanges)
+        return await _repositoryManager.Student.GetSingleOrDefaultAsync(
+            predicate: s => s.Id == studentId,
+            include: s => s.Include(s => s.Courses),
+            trackChanges)
+
             ?? throw new StudentNotFoundException(studentId);
     }
 
-    private async Task<Course> GetCourseAndCheckIfExists(int id)
+    private async Task<Course> GetCourseAndCheckIfExists(int id, bool trackChanges)
     {
         return await _repositoryManager.Course.GetSingleOrDefaultAsync(
             predicate: c => c.Id == id,
             include: c => c
                 .Include(c => c.Teacher)
-                .Include(c => c.Students))
+                .Include(c => c.Students),
+            trackChanges)
 
             ?? throw new CourseNotFoundException(id);
     }

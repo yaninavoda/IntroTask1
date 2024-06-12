@@ -24,7 +24,7 @@ public class StudentsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetStudents()
     {
-        var students = await _service.StudentService.GetAllStudentsAsync(trackChanges: false);
+        var students = await _service.StudentService.GetAllStudentsAsync();
 
         return Ok(students);
     }
@@ -37,7 +37,7 @@ public class StudentsController : ControllerBase
     [HttpGet("{id:int}", Name = "StudentById")]
     public async Task<IActionResult> GetStudent(int id)
     {
-        var student = await _service.StudentService.GetStudentByIdAsync(id, trackChanges: false);
+        var student = await _service.StudentService.GetStudentByIdAsync(id, false);
 
         return Ok(student);
     }
@@ -89,7 +89,7 @@ public class StudentsController : ControllerBase
     [ProducesResponseType(422)]
     public async Task<IActionResult> UpdateStudent(int id, [FromBody]StudentUpdateDto student)
     {
-        await _service.StudentService.UpdateStudentAsync(id, student, trackChanges: true);
+        await _service.StudentService.UpdateStudentAsync(id, student, true);
 
         return NoContent();
     }
@@ -107,7 +107,7 @@ public class StudentsController : ControllerBase
     [ProducesResponseType(422)]
     public async Task<IActionResult> EnrollStudentInCourse(int id, int courseId, [FromBody] StudentUpdateDto student)
     {
-        await _service.StudentService.EnrollStudentInCourseAsync(id, courseId, student, trackChanges: true);
+        await _service.StudentService.EnrollStudentInCourseAsync(id, courseId, student, true);
 
         return NoContent();
     }
@@ -122,7 +122,7 @@ public class StudentsController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteStudent(int id)
     {
-        await _service.StudentService.DeleteStudentAsync(id, trackChanges: false);
+        await _service.StudentService.DeleteStudentAsync(id, false);
 
         return NoContent();
     }
