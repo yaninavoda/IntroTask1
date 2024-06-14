@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Contracts;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.StudentDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.StudentServiceTests;
 
@@ -20,9 +22,8 @@ public class GetAllStudentsTests
         _mapperMock = new Mock<IMapper>();
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public async Task GetAllStudentsAsync_ShouldReturnStudentShortResponseDtos_IfStudentsExist(bool trackChanges)
+    [Test]
+    public async Task GetAllStudentsAsync_ShouldReturnStudentShortResponseDtos_IfStudentsExist()
     {
         // Arrange
         SetupRepositoryMockReturnsDataCollection();
@@ -31,15 +32,14 @@ public class GetAllStudentsTests
         _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var studentDtos = await _sut.GetAllStudentsAsync(trackChanges);
+        var studentDtos = await _sut.GetAllStudentsAsync();
 
         // Assert
         Assert.That(studentDtos, Is.InstanceOf<IEnumerable<StudentShortResponseDto>>());
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public async Task GetAllStudentsAsync_ShouldReturnCorrectAmmountOfDtos_IfStudentsExist(bool trackChanges)
+    [Test]
+    public async Task GetAllStudentsAsync_ShouldReturnCorrectAmmountOfDtos_IfStudentsExist()
     {
         // Arrange
         SetupRepositoryMockReturnsDataCollection();
@@ -48,7 +48,7 @@ public class GetAllStudentsTests
         _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var studentDtos = await _sut.GetAllStudentsAsync(trackChanges);
+        var studentDtos = await _sut.GetAllStudentsAsync();
 
         // Assert
         Assert.That(studentDtos.Count, Is.EqualTo(GetStudents().Count()));
@@ -65,15 +65,14 @@ public class GetAllStudentsTests
         _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var studentDtos = await _sut.GetAllStudentsAsync(trackChanges: false);
+        var studentDtos = await _sut.GetAllStudentsAsync();
 
         // Assert
         Assert.That(studentDtos, Is.Empty);
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public async Task GetAllStudentsAsync_ShouldBeCalledOnce_IfStudentsExist(bool trackChanges)
+    [Test]
+    public async Task GetAllStudentsAsync_ShouldBeCalledOnce_IfStudentsExist()
     {
         // Arrange
         SetupRepositoryMockReturnsDataCollection();
@@ -82,10 +81,10 @@ public class GetAllStudentsTests
         _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var studentDtos = await _sut.GetAllStudentsAsync(trackChanges);
+        var studentDtos = await _sut.GetAllStudentsAsync();
 
         // Assert
-        _repositoryMock.Verify(repo => repo.Student.GetAllStudentsAsync(trackChanges), Times.Once);
+        _repositoryMock.Verify(repo => repo.Student.GetAllAsync(null, null), Times.Once);
     }
 
     [Test]
@@ -97,7 +96,7 @@ public class GetAllStudentsTests
         _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var studentDtos = await _sut.GetAllStudentsAsync(trackChanges: false);
+        var studentDtos = await _sut.GetAllStudentsAsync();
 
         // Assert
         Assert.That(studentDtos, Is.Empty);
@@ -143,13 +142,27 @@ public class GetAllStudentsTests
 
     private void SetupRepositoryMockReturnsDataCollection()
     {
-        _repositoryMock.Setup(repo => repo.Student.GetAllStudentsAsync(It.IsAny<bool>()))
+        _repositoryMock.Setup(repo => repo.Student.GetAllAsync(
+            AnyEntityPredicate<Student>(),
+            AnyEntityInclude<Student>()))
             .ReturnsAsync(GetStudents());
     }
 
     private void SetupRepositoryMockReturnsEmptyCollection()
     {
-        _repositoryMock.Setup(repo => repo.Student.GetAllStudentsAsync(It.IsAny<bool>()))
+        _repositoryMock.Setup(repo => repo.Student.GetAllAsync(
+            AnyEntityPredicate<Student>(),
+            AnyEntityInclude<Student>()))
                 .ReturnsAsync(new List<Student>());
+    }
+
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
     }
 }

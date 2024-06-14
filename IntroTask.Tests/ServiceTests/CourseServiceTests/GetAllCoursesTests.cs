@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Contracts;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.CourseDtos;
-using Shared.Dtos.TeacherDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.CourseServiceTests
 {
@@ -21,9 +22,8 @@ namespace IntroTask.Tests.ServiceTests.CourseServiceTests
             _mapperMock = new Mock<IMapper>();
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task GetAllCoursesAsync_ShouldReturnCourseShortResponseDtos_IfCoursesExist(bool trackChanges)
+        [Test]
+        public async Task GetAllCoursesAsync_ShouldReturnCourseShortResponseDtos_IfCoursesExist()
         {
             // Arrange
             SetupRepositoryMockReturnsDataCollection();
@@ -32,15 +32,14 @@ namespace IntroTask.Tests.ServiceTests.CourseServiceTests
             _sut = new CourseService(_repositoryMock.Object, _mapperMock.Object);
 
             // Act
-            var courseDtos = await _sut.GetAllCoursesAsync(trackChanges);
+            var courseDtos = await _sut.GetAllCoursesAsync();
 
             // Assert
             Assert.That(courseDtos, Is.InstanceOf<IEnumerable<CourseShortResponseDto>>());
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task GetAllCoursesAsync_ShouldReturnCorrectAmmountOfDtos_IfCoursesExist(bool trackChanges)
+        [Test]
+        public async Task GetAllCoursesAsync_ShouldReturnCorrectAmmountOfDtos_IfCoursesExist()
         {
             // Arrange
             SetupRepositoryMockReturnsDataCollection();
@@ -49,15 +48,14 @@ namespace IntroTask.Tests.ServiceTests.CourseServiceTests
             _sut = new CourseService(_repositoryMock.Object, _mapperMock.Object);
 
             // Act
-            var courseDtos = await _sut.GetAllCoursesAsync(trackChanges);
+            var courseDtos = await _sut.GetAllCoursesAsync();
 
             // Assert
             Assert.That(courseDtos.Count, Is.EqualTo(GetCourses().Count()));
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task GetAllCoursesAsync_ShouldBeCalledOnce_IfCourseExist(bool trackChanges)
+        [Test]
+        public async Task GetAllCoursesAsync_ShouldBeCalledOnce_IfCourseExist()
         {
             // Arrange
             SetupRepositoryMockReturnsDataCollection();
@@ -66,10 +64,10 @@ namespace IntroTask.Tests.ServiceTests.CourseServiceTests
             _sut = new CourseService(_repositoryMock.Object, _mapperMock.Object);
 
             // Act
-            var courseDtos = await _sut.GetAllCoursesAsync(trackChanges);
+            var courseDtos = await _sut.GetAllCoursesAsync();
 
             // Assert
-            _repositoryMock.Verify(repo => repo.Course.GetAllCoursesAsync(trackChanges), Times.Once);
+            _repositoryMock.Verify(repo => repo.Course.GetAllAsync(null, null), Times.Once);
         }
 
 
@@ -82,7 +80,7 @@ namespace IntroTask.Tests.ServiceTests.CourseServiceTests
             _sut = new CourseService(_repositoryMock.Object, _mapperMock.Object);
 
             // Act
-            var courseDtos = await _sut.GetAllCoursesAsync(trackChanges: false);
+            var courseDtos = await _sut.GetAllCoursesAsync();
 
             // Assert
             Assert.That(courseDtos, Is.Empty);
@@ -126,17 +124,31 @@ namespace IntroTask.Tests.ServiceTests.CourseServiceTests
 
         private void SetupRepositoryMockReturnsDataCollection()
         {
-            _repositoryMock.Setup(repo => repo.Course.GetAllCoursesAsync(It.IsAny<bool>()))
+            _repositoryMock.Setup(repo => repo.Course.GetAllAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>()))
                 .ReturnsAsync(GetCourses());
         }
 
         private void SetupRepositoryMockReturnsEmptyCollection()
         {
-            _repositoryMock.Setup(repo => repo.Course.GetAllCoursesAsync(It.IsAny<bool>()))
+            _repositoryMock.Setup(repo => repo.Course.GetAllAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>()))
                     .ReturnsAsync(new List<Course>());
 
             _mapperMock.Setup(m => m.Map<List<CourseShortResponseDto>>(It.IsAny<IEnumerable<Course>>()))
                 .Returns(new List<CourseShortResponseDto>());
+        }
+
+        private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+        {
+            return It.IsAny<Expression<Func<TEntity, bool>>>();
+        }
+
+        private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+        {
+            return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
         }
     }
 }

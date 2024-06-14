@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Contracts;
-using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.StudentDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.StudentServiceTests;
 
@@ -54,9 +55,10 @@ public class UpdateStudentTests
 
         // Assert
         _repositoryMock.Verify(r =>
-            r.Student.GetStudentByIdAsync(
-            It.IsAny<int>(),
-            It.IsAny<bool>()),
+            r.Student.GetSingleOrDefaultAsync(
+                AnyEntityPredicate<Student>(),
+                AnyEntityInclude<Student>(),
+                It.IsAny<bool>()),
             Times.Once);
     }
 
@@ -86,10 +88,11 @@ public class UpdateStudentTests
 
     private void SetupMocksPositiveScenario()
     {
-        _repositoryMock.Setup(repo => repo.Student.GetStudentByIdAsync(
-                            It.IsAny<int>(),
-                            It.IsAny<bool>()))
-                                .ReturnsAsync(GetStudent());
+        _repositoryMock.Setup(repo => repo.Student.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Student>(),
+            AnyEntityInclude<Student>(),
+            It.IsAny<bool>()))
+                        .ReturnsAsync(GetStudent());
 
         _mapperMock.Setup(m => m.Map(It.IsAny<StudentUpdateDto>(),
             It.IsAny<Student>())).Returns(GetStudent());
@@ -113,5 +116,15 @@ public class UpdateStudentTests
                 }
             }
         };
+    }
+
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
     }
 }

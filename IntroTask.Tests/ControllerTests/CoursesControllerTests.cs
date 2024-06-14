@@ -27,7 +27,7 @@ public class CoursesControllerTests
         _mockServiceManager.Setup(s => s.CourseService)
             .Returns(_mockCourseService.Object);
 
-        _mockCourseService.Setup(s => s.GetAllCoursesAsync(false))
+        _mockCourseService.Setup(s => s.GetAllCoursesAsync())
             .ReturnsAsync(GetCourseShortResponseDtos(2));
 
         _sut = new CoursesController(_mockServiceManager.Object);
@@ -47,7 +47,7 @@ public class CoursesControllerTests
 
         _mockServiceManager.Setup(s => s.CourseService).Returns(_mockCourseService.Object);
 
-        _mockCourseService.Setup(s => s.GetAllCoursesAsync(false))
+        _mockCourseService.Setup(s => s.GetAllCoursesAsync())
             .ReturnsAsync(GetCourseShortResponseDtos(countToReturn));
 
         _sut = new CoursesController(_mockServiceManager.Object);

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Contracts;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.CourseDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.CourseServiceTests;
 
@@ -53,9 +55,10 @@ public class UpdateCourseTests
 
         // Assert
         _repositoryMock.Verify(r =>
-            r.Course.GetCourseByIdAsync(
-            It.IsAny<int>(),
-            It.IsAny<bool>()),
+            r.Course.GetSingleOrDefaultAsync(
+                AnyEntityPredicate<Course>(),
+                AnyEntityInclude<Course>(),
+                It.IsAny<bool>()),
             Times.Once);
     }
 
@@ -84,10 +87,11 @@ public class UpdateCourseTests
 
     private void SetupMocksPositiveScenario()
     {
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-                            It.IsAny<int>(),
-                            It.IsAny<bool>()))
-                                .ReturnsAsync(GetCourse());
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>(),
+            It.IsAny<bool>()))
+                .ReturnsAsync(GetCourse());
 
         _mapperMock.Setup(m => m.Map(It.IsAny<CourseUpdateDto>(),
             It.IsAny<Course>())).Returns(GetCourse());
@@ -112,5 +116,15 @@ public class UpdateCourseTests
                 }
             }
         };
+    }
+
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
     }
 }

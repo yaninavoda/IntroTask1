@@ -2,9 +2,11 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.TeacherDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
 
@@ -54,9 +56,10 @@ public class ResignTeacherFromCourseTests
 
         // Assert
         _repositoryMock.Verify(r =>
-            r.Teacher.GetTeacherByIdAsync(
-            It.IsAny<int>(),
-            It.IsAny<bool>()),
+            r.Teacher.GetSingleOrDefaultAsync(
+                AnyEntityPredicate<Teacher>(),
+                AnyEntityInclude<Teacher>(),
+                It.IsAny<bool>()),
             Times.Once);
     }
 
@@ -74,9 +77,10 @@ public class ResignTeacherFromCourseTests
 
         // Assert
         _repositoryMock.Verify(r =>
-            r.Course.GetCourseByIdAsync(
-            It.IsAny<int>(),
-            It.IsAny<bool>()),
+            r.Course.GetSingleOrDefaultAsync(
+                AnyEntityPredicate<Course>(),
+                AnyEntityInclude<Course>(),
+                It.IsAny<bool>()),
             Times.Once);
     }
 
@@ -166,13 +170,15 @@ public class ResignTeacherFromCourseTests
 
     private void SetupMocksPositiveScenario()
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Teacher.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Teacher>(),
+            AnyEntityInclude<Teacher>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetTeacherWithCourse());
 
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetCourse(teacherId: 1));
 
@@ -184,47 +190,54 @@ public class ResignTeacherFromCourseTests
 
     private void SetupMocksNotConnectedEntities()
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Teacher.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Teacher>(),
+            AnyEntityInclude<Teacher>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetTeacherWithWrongCourse());
 
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetCourse(teacherId: 2));
     }
 
     private void SetupMocksTeacherNotFound(int id)
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Teacher.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Teacher>(),
+            AnyEntityInclude<Teacher>(),
             It.IsAny<bool>()))
                 .ThrowsAsync(new TeacherNotFoundException(id));
     }
 
     private void SetupMocksCourseNotFound(int id)
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Teacher.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Teacher>(),
+            AnyEntityInclude<Teacher>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetTeacherWithCourse());
 
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>(),
             It.IsAny<bool>()))
                 .ThrowsAsync(new CourseNotFoundException(id));
     }
 
     private void SetupMocksSaveOperationFailed()
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Teacher.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Teacher>(),
+            AnyEntityInclude<Teacher>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetTeacherWithCourse());
 
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetCourse(teacherId: 1));
 
@@ -232,6 +245,16 @@ public class ResignTeacherFromCourseTests
             It.IsAny<Teacher>())).Returns(GetTeacher());
 
         _repositoryMock.Setup(repo => repo.SaveAsync()).ThrowsAsync(new Exception());
+    }
+
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
     }
 
     private static Teacher GetTeacher()

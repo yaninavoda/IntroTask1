@@ -70,7 +70,7 @@ public class CreateStudentTests
         _mapperMock.Setup(m => m.Map<Student>(It.IsAny<StudentCreateDto>()))
                     .Returns(GetStudent());
 
-        _repositoryMock.Setup(repo => repo.Student.CreateStudent(GetStudent())).Verifiable();
+        _repositoryMock.Setup(repo => repo.Student.Create(GetStudent())).Verifiable();
         _repositoryMock.Setup(repo => repo.SaveAsync()).ThrowsAsync(new Exception());
 
 
@@ -80,10 +80,10 @@ public class CreateStudentTests
 
     private void SetupMockPositiveScenario()
     {
-        _mapperMock.Setup(m => m.Map<Student>(It.IsAny<Shared.Dtos.StudentDtos.StudentCreateDto>()))
+        _mapperMock.Setup(m => m.Map<Student>(It.IsAny<StudentCreateDto>()))
                     .Returns(GetStudent());
 
-        _repositoryMock.Setup(repo => repo.Student.CreateStudent(GetStudent())).Verifiable();
+        _repositoryMock.Setup(repo => repo.Student.Create(GetStudent())).Verifiable();
         _repositoryMock.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
 
         _mapperMock.Setup(m => m.Map<StudentShortResponseDto>(It.IsAny<Student>()))

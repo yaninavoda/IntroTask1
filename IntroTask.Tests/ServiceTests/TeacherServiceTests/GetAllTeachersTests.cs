@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Contracts;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using NUnit.Framework.Internal;
 using Service;
 using Shared.Dtos.TeacherDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
 
@@ -21,9 +23,8 @@ public class GetAllTeachersTests
         _mapperMock = new Mock<IMapper>();
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public async Task GetAllTeachersAsync_ShouldReturnTeacherShortResponseDtos_IfTeachersExist(bool trackChanges)
+    [Test]
+    public async Task GetAllTeachersAsync_ShouldReturnTeacherShortResponseDtos_IfTeachersExist()
     {
         // Arrange
         SetupRepositoryMockReturnsDataCollection();
@@ -32,15 +33,14 @@ public class GetAllTeachersTests
         _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges);
+        var teacherDtos = await _sut.GetAllTeachersAsync();
 
         // Assert
         Assert.That(teacherDtos, Is.InstanceOf<IEnumerable<TeacherShortResponseDto>>());
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public async Task GetAllTeachersAsync_ShouldReturnCorrectAmmountOfDtos_IfTeachersExist(bool trackChanges)
+    [Test]
+    public async Task GetAllTeachersAsync_ShouldReturnCorrectAmmountOfDtos_IfTeachersExist()
     {
         // Arrange
         SetupRepositoryMockReturnsDataCollection();
@@ -49,15 +49,14 @@ public class GetAllTeachersTests
         _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges);
+        var teacherDtos = await _sut.GetAllTeachersAsync();
 
         // Assert
         Assert.That(teacherDtos.Count, Is.EqualTo(GetTeachers().Count()));
     }
 
-    [TestCase(true)]
-    [TestCase(false)]
-    public async Task GetAllTeachersAsync_ShouldBeCalledOnce_IfTeacherExist(bool trackChanges)
+    [Test]
+    public async Task GetAllTeachersAsync_ShouldBeCalledOnce_IfTeacherExist()
     {
         // Arrange
         SetupRepositoryMockReturnsDataCollection();
@@ -66,10 +65,10 @@ public class GetAllTeachersTests
         _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges);
+        var teacherDtos = await _sut.GetAllTeachersAsync();
 
         // Assert
-        _repositoryMock.Verify(repo => repo.Teacher.GetAllTeachersAsync(trackChanges), Times.Once);
+        _repositoryMock.Verify(repo => repo.Teacher.GetAllAsync(null, null), Times.Once);
     }
 
 
@@ -82,7 +81,7 @@ public class GetAllTeachersTests
         _sut = new TeacherService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act
-        var teacherDtos = await _sut.GetAllTeachersAsync(trackChanges: false);
+        var teacherDtos = await _sut.GetAllTeachersAsync();
 
         // Assert
         Assert.That(teacherDtos, Is.Empty);
@@ -126,15 +125,29 @@ public class GetAllTeachersTests
 
     private void SetupRepositoryMockReturnsDataCollection()
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>()))
-            .ReturnsAsync(GetTeachers());
+        _repositoryMock.Setup(repo => repo.Teacher.GetAllAsync(
+            AnyEntityPredicate<Teacher>(),
+            AnyEntityInclude<Teacher>()))
+                .ReturnsAsync(GetTeachers());
     }
 
     private void SetupRepositoryMockReturnsEmptyCollection()
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetAllTeachersAsync(It.IsAny<bool>()))
+        _repositoryMock.Setup(repo => repo.Teacher.GetAllAsync(
+            AnyEntityPredicate<Teacher>(),
+            AnyEntityInclude<Teacher>()))
                 .ReturnsAsync(new List<Teacher>());
     }
 
-    
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
+    }
+
+
 }

@@ -27,7 +27,7 @@ public class TeachersControllerTests
         _mockServiceManager.Setup(s => s.TeacherService)
             .Returns(_mockTeacherService.Object);
 
-        _mockTeacherService.Setup(s => s.GetAllTeachersAsync(false))
+        _mockTeacherService.Setup(s => s.GetAllTeachersAsync())
             .ReturnsAsync(GetTeacherShortResponseDtos(2));
 
         _sut = new TeachersController(_mockServiceManager.Object);
@@ -47,7 +47,7 @@ public class TeachersControllerTests
         _mockServiceManager.Setup(s => s.TeacherService)
             .Returns(_mockTeacherService.Object);
 
-        _mockTeacherService.Setup(s => s.GetAllTeachersAsync(false))
+        _mockTeacherService.Setup(s => s.GetAllTeachersAsync())
             .ReturnsAsync(GetTeacherShortResponseDtos(countToReturn));
 
         _sut = new TeachersController(_mockServiceManager.Object);
@@ -263,7 +263,7 @@ public class TeachersControllerTests
         _sut = new TeachersController(_mockServiceManager.Object);
 
         // Act
-        var result = await _sut.ResignTeacherFromCourse(teacherId, courseId, teacherUpdateDto, true);
+        var result = await _sut.ResignTeacherFromCourse(teacherId, courseId, teacherUpdateDto);
         var noContentResult = (NoContentResult)result;
 
         // Assert
@@ -282,7 +282,7 @@ public class TeachersControllerTests
         _sut = new TeachersController(_mockServiceManager.Object);
 
         // Act
-        var result = await _sut.ResignTeacherFromCourse(1, 1, teacherUpdateDto, true);
+        var result = await _sut.ResignTeacherFromCourse(1, 1, teacherUpdateDto);
         var badRequestResult = (BadRequestObjectResult)result;
 
         // Assert
@@ -307,7 +307,7 @@ public class TeachersControllerTests
         _sut.ModelState.AddModelError("Dto", "Invalid");
 
         // Act
-        var result = await _sut.ResignTeacherFromCourse(teacherId, courseId, updateDto, true);
+        var result = await _sut.ResignTeacherFromCourse(teacherId, courseId, updateDto);
         var unprocessableEntityObjectResult = (UnprocessableEntityObjectResult)result;
 
         // Assert
