@@ -2,12 +2,12 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.CourseDtos;
 using Shared.Dtos.StudentDtos;
-using Shared.Dtos.TeacherDtos;
-using System.Reflection;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.CourseServiceTests;
 
@@ -113,17 +113,29 @@ public class GetCourseByIdTests
 
     private void SetupRepositoryMockReturnsSingleEntity()
     {
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-                    It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+                    AnyEntityPredicate<Course>(),
+                    AnyEntityInclude<Course>(),
                     It.IsAny<bool>()))
                         .ReturnsAsync(GetCourse());
     }
 
     private void SetupRepositoryMockThrowsException(int id)
     {
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-                    It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+                    AnyEntityPredicate<Course>(),
+                    AnyEntityInclude<Course>(),
                     It.IsAny<bool>()))
                         .ThrowsAsync(new CourseNotFoundException(id));
+    }
+
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
     }
 }

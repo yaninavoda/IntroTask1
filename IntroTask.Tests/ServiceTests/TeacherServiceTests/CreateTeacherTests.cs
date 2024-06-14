@@ -96,7 +96,7 @@ public class CreateTeacherTests
         _mapperMock.Setup(m => m.Map<Teacher>(It.IsAny<TeacherCreateDto>()))
                     .Returns(GetTeacher());
 
-        _repositoryMock.Setup(repo => repo.Teacher.CreateTeacher(GetTeacher())).Verifiable();
+        _repositoryMock.Setup(repo => repo.Teacher.Create(GetTeacher())).Verifiable();
         _repositoryMock.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
 
         _mapperMock.Setup(m => m.Map<TeacherShortResponseDto>(It.IsAny<Teacher>()))
@@ -108,7 +108,7 @@ public class CreateTeacherTests
         _mapperMock.Setup(m => m.Map<Teacher>(It.IsAny<TeacherCreateDto>()))
                     .Returns(GetTeacher());
 
-        _repositoryMock.Setup(repo => repo.Teacher.CreateTeacher(GetTeacher())).Verifiable();
+        _repositoryMock.Setup(repo => repo.Teacher.Create(GetTeacher())).Verifiable();
         _repositoryMock.Setup(repo => repo.SaveAsync()).ThrowsAsync(new Exception());
 
 

@@ -29,7 +29,7 @@ public class StudentsControllerTests
         _mockServiceManager.Setup(s => s.StudentService)
             .Returns(_mockStudentService.Object);
 
-        _mockStudentService.Setup(s => s.GetAllStudentsAsync(false))
+        _mockStudentService.Setup(s => s.GetAllStudentsAsync())
             .ReturnsAsync(GetStudentShortResponseDtos(2));
 
         _sut = new StudentsController(_mockServiceManager.Object);
@@ -50,7 +50,7 @@ public class StudentsControllerTests
         _mockServiceManager.Setup(s => s.StudentService)
             .Returns(_mockStudentService.Object);
 
-        _mockStudentService.Setup(s => s.GetAllStudentsAsync(false))
+        _mockStudentService.Setup(s => s.GetAllStudentsAsync())
             .ReturnsAsync(GetStudentShortResponseDtos(countToReturn));
 
         _sut = new StudentsController(_mockServiceManager.Object);

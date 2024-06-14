@@ -2,9 +2,11 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.CourseDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.CourseServiceTests
 {
@@ -95,23 +97,36 @@ namespace IntroTask.Tests.ServiceTests.CourseServiceTests
 
         private void SetupMocksStudentNotFound(int id)
         {
-            _repositoryMock.Setup(repo => repo.Student.GetStudentByIdAsync(
-                It.IsAny<int>(),
+            _repositoryMock.Setup(repo => repo.Student.GetSingleOrDefaultAsync(
+                AnyEntityPredicate<Student>(),
+                AnyEntityInclude<Student>(),
                 It.IsAny<bool>()))
                     .ThrowsAsync(new StudentNotFoundException(id));
         }
 
         private void SetupMocksCourseNotFound(int id)
         {
-            _repositoryMock.Setup(repo => repo.Student.GetStudentByIdAsync(
-                It.IsAny<int>(),
+            _repositoryMock.Setup(repo => repo.Student.GetSingleOrDefaultAsync(
+                AnyEntityPredicate<Student>(),
+                AnyEntityInclude<Student>(),
                 It.IsAny<bool>()))
                     .ReturnsAsync(GetStudent());
 
-            _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-                It.IsAny<int>(),
+            _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+                AnyEntityPredicate<Course>(),
+                AnyEntityInclude<Course>(),
                 It.IsAny<bool>()))
                     .ThrowsAsync(new CourseNotFoundException(id));
+        }
+
+        private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+        {
+            return It.IsAny<Expression<Func<TEntity, bool>>>();
+        }
+
+        private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+        {
+            return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
         }
     }
 }

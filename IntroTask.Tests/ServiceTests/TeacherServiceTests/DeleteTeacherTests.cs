@@ -2,8 +2,10 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.TeacherServiceTests;
 
@@ -35,7 +37,7 @@ public class DeleteTeacherTests
         // Assert
         _repositoryMock.Verify(
                 repo =>
-                repo.Teacher.DeleteTeacher(It.IsAny<Teacher>()),
+                repo.Teacher.Delete(It.IsAny<Teacher>()),
                 Times.Once);
     }
 
@@ -91,21 +93,33 @@ public class DeleteTeacherTests
 
     private void SetupRepositoryMockReturnsSingleEntity()
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
-                    It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Teacher.GetSingleOrDefaultAsync(
+                    AnyEntityPredicate<Teacher>(),
+                    AnyEntityInclude<Teacher>(),
                     It.IsAny<bool>()))
                         .ReturnsAsync(GetTeacher());
 
-        _repositoryMock.Setup(repo => repo.Teacher.DeleteTeacher(GetTeacher())).Verifiable();
+        _repositoryMock.Setup(repo => repo.Teacher.Delete(GetTeacher())).Verifiable();
 
         _repositoryMock.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
     }
 
     private void SetupRepositoryMockThrowsException(int id)
     {
-        _repositoryMock.Setup(repo => repo.Teacher.GetTeacherByIdAsync(
-                    It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Teacher.GetSingleOrDefaultAsync(
+                    AnyEntityPredicate<Teacher>(),
+                    AnyEntityInclude<Teacher>(),
                     It.IsAny<bool>()))
                         .ThrowsAsync(new TeacherNotFoundException(id));
+    }
+
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
     }
 }

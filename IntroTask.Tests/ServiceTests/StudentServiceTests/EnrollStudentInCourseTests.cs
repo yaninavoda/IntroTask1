@@ -2,9 +2,11 @@
 using Contracts;
 using Entities.Exceptions;
 using IntroTask.Entities;
+using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 using Service;
 using Shared.Dtos.StudentDtos;
+using System.Linq.Expressions;
 
 namespace IntroTask.Tests.ServiceTests.StudentServiceTests;
 
@@ -45,28 +47,45 @@ public class EnrollStudentInCourseTests
         _sut = new StudentService(_repositoryMock.Object, _mapperMock.Object);
 
         // Act & Assert
-        Assert.ThrowsAsync<CourseNotFoundException>(async () => await _sut.EnrollStudentInCourseAsync(studentId, courseId, GetStudentUpdateDto(), trackChanges));
+        Assert.ThrowsAsync<CourseNotFoundException>(async () => await _sut.EnrollStudentInCourseAsync(
+            studentId,
+            courseId,
+            GetStudentUpdateDto(),
+            trackChanges));
     }
 
     private void SetupMocksStudentNotFound(int id)
     {
-        _repositoryMock.Setup(repo => repo.Student.GetStudentByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Student.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Student>(),
+            AnyEntityInclude<Student>(),
             It.IsAny<bool>()))
                 .ThrowsAsync(new StudentNotFoundException(id));
     }
 
     private void SetupMocksCourseNotFound(int id)
     {
-        _repositoryMock.Setup(repo => repo.Student.GetStudentByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Student.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Student>(),
+            AnyEntityInclude<Student>(),
             It.IsAny<bool>()))
                 .ReturnsAsync(GetStudentWithCourse());
 
-        _repositoryMock.Setup(repo => repo.Course.GetCourseByIdAsync(
-            It.IsAny<int>(),
+        _repositoryMock.Setup(repo => repo.Course.GetSingleOrDefaultAsync(
+            AnyEntityPredicate<Course>(),
+            AnyEntityInclude<Course>(),
             It.IsAny<bool>()))
                 .ThrowsAsync(new CourseNotFoundException(id));
+    }
+
+    private static Expression<Func<TEntity, bool>> AnyEntityPredicate<TEntity>()
+    {
+        return It.IsAny<Expression<Func<TEntity, bool>>>();
+    }
+
+    private static Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> AnyEntityInclude<TEntity>()
+    {
+        return It.IsAny<Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>>();
     }
 
     private static Student GetStudentWithCourse()

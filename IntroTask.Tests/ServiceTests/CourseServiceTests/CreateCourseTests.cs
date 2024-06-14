@@ -98,7 +98,7 @@ public class CreateCourseTests
         _mapperMock.Setup(m => m.Map<Course>(It.IsAny<CourseCreateDto>()))
                     .Returns(GetCourse());
 
-        _repositoryMock.Setup(repo => repo.Course.CreateCourse(GetCourse())).Verifiable();
+        _repositoryMock.Setup(repo => repo.Course.Create(GetCourse())).Verifiable();
         _repositoryMock.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
 
         _mapperMock.Setup(m => m.Map<CourseShortResponseDto>(It.IsAny<Course>()))
@@ -110,7 +110,7 @@ public class CreateCourseTests
         _mapperMock.Setup(m => m.Map<Course>(It.IsAny<CourseCreateDto>()))
                     .Returns(GetCourse());
 
-        _repositoryMock.Setup(repo => repo.Course.CreateCourse(GetCourse())).Verifiable();
+        _repositoryMock.Setup(repo => repo.Course.Create(GetCourse())).Verifiable();
         _repositoryMock.Setup(repo => repo.SaveAsync()).ThrowsAsync(new Exception());
 
 
